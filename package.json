@@ -1,0 +1,46 @@
+{
+  "name": "qs-token",
+  "version": "1.0.0",
+  "description": "Token for QS",
+  "scripts": {
+    "postinstall": "patch-package",
+    "clean": "rm -rf ./build",
+    "compile": "yarn clean && node scripts/cli.js compile -c FA2",
+    "test": "yarn compile && mocha --bail",
+    "migrate": "yarn compile && node scripts/cli.js migrate",
+    "migrate-s": "yarn clean && yarn truffle migrate --network development_server",
+    "start-sandbox": "docker run --rm --name my-sandbox -e flextesa_node_cors_origin='*' --detach -p 8732:20000 tqtezos/flextesa:20210316 flobox start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madfish-solutions/temple-token.git"
+  },
+  "dependencies": {
+    "@taquito/michelson-encoder": "^9.0.1",
+    "@taquito/rpc": "^9.0.1",
+    "@taquito/signer": "^9.0.1",
+    "@taquito/taquito": "^9.0.1",
+    "child_process": "^1.0.2",
+    "dotenv": "^10.0.0",
+    "fs": "^0.0.1-security",
+    "ganache-cli": "6.12.1-tezos.0",
+    "mocha": "^8.4.0",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
+    "truffle": "5.5.0-tezos.4",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2",
+    "yargs": "^17.0.1"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/madfish-solutions/temple-token/issues"
+  },
+  "homepage": "https://github.com/madfish-solutions/temple-token#readme",
+  "keywords": [
+    "tezos",
+    "ligo",
+    "blockchain"
+  ]
+}
