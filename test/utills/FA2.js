@@ -1,0 +1,155 @@
+require("ts-node").register({
+  files: true,
+});
+
+const fs = require("fs");
+
+const env = require("../../env");
+
+const { confirmOperation } = require("../../scripts/confirmation");
+
+const storage = require("../../storage/FA2");
+
+class FA2 {
+  contract;
+  storage;
+  tezos;
+
+  constructor(contract, tezos) {
+    this.contract = contract;
+    this.tezos = tezos;
+  }
+
+  static async init(templeAddress, tezos) {
+    return new FA2(await tezos.contract.at(templeAddress), tezos);
+  }
+
+  static async originate(tezos) {
+    const artifacts = JSON.parse(
+      fs.readFileSync(`${env.buildDir}/FA2.json`)
+    );
+    const operation = await tezos.contract
+      .originate({
+        code: artifacts.michelson,
+        storage: storage,
+      })
+      .catch((e) => {
+        console.error(JSON.stringify(e));
+
+        return { contractAddress: null };
+      });
+
+    await confirmOperation(tezos, operation.hash);
+
+    return new FA2(
+      await tezos.contract.at(operation.contractAddress),
+      tezos
+    );
+  }
+
+  async updateStorage(maps = {}) {
+    let storage = await this.contract.storage();
+
+    this.storage = {
+      admin: storage.admin,
+      minters: storage.minters,
+      minters_info: storage.minters_info,
+      account_info: storage.account_info,
+      token_info: storage.token_info,
+      tokens_ids: storage.tokens_ids,
+    };
+
+    for (const key in maps) {
+      this.storage[key] = await maps[key].reduce(async (prev, current) => {
+        try {
+          return {
+            ...(await prev),
+            [current]: await storage[key].get(current),
+          };
+        } catch (ex) {
+          return {
+            ...(await prev),
+            [current]: 0,
+          };
+        }
+      }, Promise.resolve({}));
+    }
+  }
+
+  async transfer(from, txs) {
+    const operation = await this.contract.methods
+      .transfer([
+        {
+          from_: from,
+          txs,
+        },
+      ])
+      .send();
+
+    await confirmOperation(this.tezos, operation.hash);
+
+    return operation;
+  }
+
+  async mint(txs) {
+    const operation = await this.contract.methods.mint(txs).send();
+
+    await confirmOperation(this.tezos, operation.hash);
+
+    return operation;
+  }
+
+  async mintZero(amount) {
+    const operation = await this.contract.methods.mint_qs_token(amount).send();
+
+    await confirmOperation(this.tezos, operation.hash);
+
+    return operation;
+  }
+
+  async updateAdmin(newAdmin) {
+    const operation = await this.contract.methods.update_admin(newAdmin).send();
+
+    await confirmOperation(this.tezos, operation.hash);
+
+    return operation;
+  }
+
+  async updateMinters(minter, allowed, percent) {
+    const operation = await this.contract.methods
+      .update_minter(minter, allowed, percent)
+      .send();
+
+    await confirmOperation(this.tezos, operation.hash);
+
+    return operation;
+  }
+
+  async balanceOf(requests, contract) {
+    const operation = await this.contract.methods
+      .balance_of({ requests, contract })
+      .send();
+
+    await confirmOperation(this.tezos, operation.hash);
+
+    return operation;
+  }
+
+  async updateOperators(params) {
+    const operation = await this.contract.methods
+      .update_operators(
+        params.map((param) => {
+          return {
+            [param.option]: param.param,
+          };
+        })
+      )
+      .send();
+
+    await confirmOperation(this.tezos, operation.hash);
+
+    return operation;
+  }
+}
+
+module.exports.FA2 = FA2;
