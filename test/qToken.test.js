@@ -17,6 +17,13 @@ require("ts-node").register({
   files: true,
 });
 
+const tokenMetadata = MichelsonMap.fromLiteral({
+      symbol: Buffer.from("QST").toString("hex"),
+      name: Buffer.from("QSTT").toString("hex"),
+      decimals: Buffer.from("6").toString("hex"),
+      icon: Buffer.from("").toString("hex"),
+    });
+
 describe("Test Q token", async function () {
   var tezos;
   var fa2;
@@ -34,13 +41,20 @@ describe("Test Q token", async function () {
     strictEqual(fa2.storage.admin, accounts[1]);
   });
 
+  it("create new token", async () => {
+    tezos = await Utils.setProvider(tezos, accountsMap.get(accounts[1]));
+    await fa2.createToken(tokenMetadata);
+    await fa2.updateStorage();
+
+    console.log(await fa2.storage.token_metadata.get(0))
+    console.log(await fa2.storage.token_metadata.get(1))
+    console.log(fa2.storage.tokens_ids)
+  });
+
   it("set minters", async () => {
     tezos = await Utils.setProvider(tezos, accountsMap.get(accounts[1]));
     await fa2.updateMinters(accounts[0], 1, 20);
     await fa2.updateStorage();
-
-    console.log(fa2.storage.minters[0]);
-    console.log(fa2.storage.minters_info[0]);
 
     strictEqual(fa2.storage.minters[0], accounts[0]);
   });
