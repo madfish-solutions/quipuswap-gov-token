@@ -20,8 +20,8 @@ class FA2 {
     this.tezos = tezos;
   }
 
-  static async init(templeAddress, tezos) {
-    return new FA2(await tezos.contract.at(templeAddress), tezos);
+  static async init(qsAddress, tezos) {
+    return new FA2(await tezos.contract.at(qsAddress), tezos);
   }
 
   static async originate(tezos) {
@@ -49,14 +49,16 @@ class FA2 {
 
   async updateStorage(maps = {}) {
     let storage = await this.contract.storage();
-
     this.storage = {
-      admin: storage.admin,
-      minters: storage.minters,
-      minters_info: storage.minters_info,
       account_info: storage.account_info,
       token_info: storage.token_info,
+      metadata: storage.metadata,
+      token_metadata: storage.token_metadata,
+      minters: storage.minters,
+      minters_info: storage.minters_info,
       tokens_ids: storage.tokens_ids,
+      last_token_id: storage.last_token_id,
+      admin: storage.admin,
     };
 
     for (const key in maps) {
@@ -85,6 +87,14 @@ class FA2 {
         },
       ])
       .send();
+
+    await confirmOperation(this.tezos, operation.hash);
+
+    return operation;
+  }
+
+  async createToken(token_metadata) {
+    const operation = await this.contract.methods.create_token(token_metadata).send();
 
     await confirmOperation(this.tezos, operation.hash);
 
