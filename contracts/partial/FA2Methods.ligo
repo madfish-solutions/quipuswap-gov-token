@@ -13,7 +13,6 @@ function get_token_info(const token_id : token_id; const s : quipu_storage) : to
   case s.token_info[token_id] of
   | None -> record [
     total_supply    = 0n;
-    used_supply     = 0n;
   ]
   | Some(v) -> v
   end
@@ -128,12 +127,6 @@ function get_balance_of(const balance_params : balance_params; const s : quipu_s
           request = request;
           balance = get_balance_by_token(user, request.token_id);
         ];
-
-        (* Check for Temple token (with ID equal to 0) *)
-        if request.token_id = 0n then
-          response.balance := response.balance
-        else
-          skip;
       } with response # l;
 
     (* Collect balances info *)
