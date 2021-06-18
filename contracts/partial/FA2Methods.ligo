@@ -24,6 +24,57 @@ function get_balance_by_token(const user : account; const token_id : token_id) :
   | Some(v) -> v
   end
 
+(*
+ * Validates the operators for the given transfer batch
+ * and the operator storage.
+ *)
+[@inline] function is_approved_operator(const transfer_param: transfer_param; const s : quipu_storage) : bool is
+  block {
+    const operator : address = Tezos.sender;
+    const owner : address = transfer_param.from_;
+    const user : account = get_account(owner, s);
+
+  } with owner = operator or Set.mem(operator, user.permits)
+
+(*
+ * Verify the sender of a `transfer` action.
+ *
+ * The check is successful if either of these is true:
+ * 1) The sender is either the owner or an approved operator for each and every
+ *    account from which funds will be withdrawn.
+ * 2) All transfers withdraw funds from a single account, and the account owner
+ *    has issued a permit allowing this call to go through.
+ *)
+function transfer_sender_check(const params : transfer_params; const store : quipu_storage; const full_param : quipu_action) : quipu_storage is
+  block { // check if the sender is either the owner or an approved operator for all transfers
+    const is_approved_operator_for_all : bool =
+      List.fold(function(const acc: bool; const p : transfer_param) is
+        acc and is_approved_operator(p, store),
+        params,
+        True
+      )
+  } with
+      if is_approved_operator_for_all then
+        store
+      else
+        case params of
+          nil -> store
+        | first_param # rest -> block {
+            // check whether `from_` has issued a permit
+            const from_: address = first_param.from_;
+            const updated_store : quipu_storage = sender_check(from_, store, full_param, "FA2_NOT_OPERATOR");
+            // check that all operations relate to the same owner.
+            List.iter
+              ( function (const param : transfer_param): unit is
+                  if param.from_ =/= from_
+                    then failwith ("FA2_NOT_OPERATOR")
+                    else Unit
+              , rest
+              )
+          } with updated_store
+        end
+
+
 (* Perform transfers *)
 function iterate_transfer(const s : quipu_storage; const params : transfer_param) : quipu_storage is
   block {
@@ -137,8 +188,12 @@ function get_balance_of(const balance_params : balance_params; const s : quipu_s
     balance_params.callback
   )]
 
-function update_operators(const s : quipu_storage; const params : update_operator_params) : quipu_storage is
-  List.fold(iterate_update_operators, params, s)
+function update_operators(const s : quipu_storage; const params : update_operator_params; const full_param : quipu_action) : quipu_storage is
+  block {
+    const store : quipu_storage = sender_check(Tezos.sender, s, full_param, "NOT_TOKEN_OWNER");
+  } with List.fold(iterate_update_operators, params, store)
 
-function transfer(const s : quipu_storage; const params : transfer_params) : quipu_storage is
-  List.fold(iterate_transfer, params, s)
+function transfer(const s : quipu_storage; const params : transfer_params; const full_param : quipu_action) : quipu_storage is
+  block {
+    const store : quipu_storage = transfer_sender_check(params, s, full_param);
+  } with List.fold(iterate_transfer, params, store)

@@ -1,4 +1,5 @@
 #include "../partial/FA2Types.ligo"
+#include "../partial/IPermit.ligo"
 
 type account is [@layout:comb] record [
   balances            : map(token_id, nat);
@@ -24,6 +25,9 @@ type quipu_storage is [@layout:comb] record [
   tokens_ids          : set(token_id);
   last_token_id       : nat;
   admin               : address;
+  permit_counter      : counter;
+  permits             : permits;
+  default_expiry      : seconds;
 ]
 
 type update_minter_param is [@layout:comb] record [
@@ -51,8 +55,10 @@ type quipu_action is
 | Update_minter           of update_minter_param
 | Update_admin            of address
 | Transfer                of transfer_params
-| Balance_of              of balance_params
 | Update_operators        of update_operator_params
+| Balance_of              of balance_params
+| Permit                  of permit_param
+| Set_expiry              of set_expiry_param
 
 [@inline] const no_operations : list(operation) = nil;
 
