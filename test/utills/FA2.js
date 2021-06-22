@@ -25,9 +25,7 @@ class FA2 {
   }
 
   static async originate(tezos) {
-    const artifacts = JSON.parse(
-      fs.readFileSync(`${env.buildDir}/FA2.json`)
-    );
+    const artifacts = JSON.parse(fs.readFileSync(`${env.buildDir}/FA2.json`));
     const operation = await tezos.contract
       .originate({
         code: artifacts.michelson,
@@ -41,10 +39,7 @@ class FA2 {
 
     await confirmOperation(tezos, operation.hash);
 
-    return new FA2(
-      await tezos.contract.at(operation.contractAddress),
-      tezos
-    );
+    return new FA2(await tezos.contract.at(operation.contractAddress), tezos);
   }
 
   async updateStorage(maps = {}) {
@@ -94,7 +89,9 @@ class FA2 {
   }
 
   async createToken(token_metadata) {
-    const operation = await this.contract.methods.create_token(token_metadata).send();
+    const operation = await this.contract.methods
+      .create_token(token_metadata)
+      .send();
 
     await confirmOperation(this.tezos, operation.hash);
 
@@ -110,7 +107,7 @@ class FA2 {
   }
 
   async mintZero(amount) {
-    const operation = await this.contract.methods.mint_qs_token(amount).send();
+    const operation = await this.contract.methods.mint_gov_token(amount).send();
 
     await confirmOperation(this.tezos, operation.hash);
 
