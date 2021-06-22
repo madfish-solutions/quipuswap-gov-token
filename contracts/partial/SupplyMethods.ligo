@@ -70,7 +70,7 @@ function mint_gov_token(
         s.account_info[i.minter] := dst_account;
         s.token_info[0n] := token;
       } with s
-  } with Set.fold (make_mint_zero_token, s.minters_info, s)
+  } with Set.fold(make_mint_zero_token, s.minters_info, s)
 
 function create_token(
   var s                 : quipu_storage;

@@ -6,11 +6,11 @@ type account            is [@layout:comb] record [
     permits               : set(address);
   ]
 type token_info         is [@layout:comb] record [
-    total_supply            : nat;
+    total_supply          : nat;
   ]
 type minter_type        is record [
-    minter                  : address;
-    percent                 : nat;
+    minter                : address;
+    percent               : nat;
   ]
 
 type quipu_storage      is [@layout:comb] record [
