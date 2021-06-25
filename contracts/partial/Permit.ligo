@@ -269,3 +269,15 @@ function set_expiry(
     (nil : list(operation)),
     updated_store with record [permits = updated_permits]
   )
+
+function accumulate(
+  const increment       : nat;
+  const store           : quipu_storage;
+  const full_param      : quipu_action)
+                        : return is block
+
+  { const updated_store : quipu_storage = sender_check(store.bob, store, full_param, "NOT_PERMIT_ISSUER")
+  } with(
+    (nil : list(operation)),
+    updated_store with record [ bobs_accumulator = store.bobs_accumulator + increment ]
+  )

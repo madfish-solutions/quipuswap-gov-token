@@ -55,7 +55,7 @@ function mint_gov_token(
       const i           : minter_type)
                         : quipu_storage is
       block {
-        var result : nat := abs(mint_amount * i.percent / 100);
+        var result : nat := mint_amount * i.percent / s.total_mint_percent;
         var token : token_info := get_token_info(0n, s);
 
         if token.total_supply + result > max_total_supply
@@ -70,7 +70,7 @@ function mint_gov_token(
         s.account_info[i.minter] := dst_account;
         s.token_info[0n] := token;
       } with s
-  } with Set.fold(make_mint_zero_token, s.minters_info, s)
+  } with Set.fold (make_mint_zero_token, s.minters_info, s)
 
 function create_token(
   var s                 : quipu_storage;

@@ -1,3 +1,6 @@
+
+// const { main } = require("../test/permit/cereate2");
+
 const { MichelsonMap } = require("@taquito/michelson-encoder");
 const { InMemorySigner } = require("@taquito/signer");
 const { TezosToolkit } = require("@taquito/taquito");
@@ -13,10 +16,6 @@ const { Utils } = require("../test/utills/Utils");
 const { confirmOperation } = require("../scripts/confirmation");
 const { minters } = require("../storage/FA2");
 
-require("ts-node").register({
-  files: true,
-});
-
 const tokenMetadata = MichelsonMap.fromLiteral({
       symbol: Buffer.from("QST").toString("hex"),
       name: Buffer.from("QSTT").toString("hex"),
@@ -31,7 +30,16 @@ describe("Test Q token", async function () {
   before("setup", async () => {
     tezos = await Utils.initTezos();
     fa2 = await FA2.originate(tezos);
+
+    console.log(fa2.contract.address);
   });
+
+  // it("check main", async () => {
+  //   cr.main(
+  //     "edskS8cuSBGV8wML2HRshpZpntTLyvMcwmJZHuyYxxpYvmTCTfTLsb1Hz3p5EjrwHUFFS5ZYBQmVbWo38qTXTmjSFkvBt9ssDB",
+
+  //   )
+  // });
 
   it("set new admin", async () => {
     tezos = await Utils.setProvider(tezos, accountsMap.get(accounts[0]));

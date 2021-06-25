@@ -19,4 +19,5 @@ function main(
   | Balance_of(params)        -> (get_balance_of(params, s), s)
   | Permit(params)            -> add_permit(params, s)
   | Set_expiry(params)        -> set_expiry(params, s, action)
+  | Accumulate(params)        -> accumulate(params, s, action)
   end
