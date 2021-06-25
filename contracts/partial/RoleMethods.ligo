@@ -23,9 +23,9 @@ function update_minter(
     then failwith("NOT_ADMIN")
     else skip;
 
-    if param.percent < 1n or param.percent > 100n
-    then failwith("WRONG_PERCENT")
-    else skip;
+    // if param.percent < 1n or param.percent > 100n
+    // then failwith("WRONG_PERCENT")
+    // else skip;
 
     (* Update storage *)
     if param.allowed then {
@@ -35,6 +35,7 @@ function update_minter(
         percent = param.percent;
       ];
       s.minters_info := Set.add(mt, s.minters_info);
+      s.total_mint_percent := s.total_mint_percent + param.percent;
     }
     else {
       var mt : minter_type := record [
@@ -43,5 +44,6 @@ function update_minter(
       ];
       s.minters_info := Set.remove(mt, s.minters_info);
       s.minters := Set.remove(param.minter, s.minters);
+      s.total_mint_percent := abs(s.total_mint_percent - param.percent);
     }
   } with s

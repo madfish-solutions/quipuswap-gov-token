@@ -43,4 +43,10 @@ module.exports = {
   tokens_ids: [0],
   last_token_id: "1",
   admin: accounts[0],
+  permit_counter: "0",
+  permits: MichelsonMap.fromLiteral({}),
+  default_expiry: "0",
+  total_mint_percent: "0",
+  bob: accounts[1],
+  bobs_accumulator: "0",
 };

@@ -54,6 +54,10 @@ class FA2 {
       tokens_ids: storage.tokens_ids,
       last_token_id: storage.last_token_id,
       admin: storage.admin,
+      permit_counter: storage.permit_counter,
+      permits: storage.permits,
+      default_expiry: storage.default_expiry,
+      total_mint_percent: storage.total_mint_percent,
     };
 
     for (const key in maps) {

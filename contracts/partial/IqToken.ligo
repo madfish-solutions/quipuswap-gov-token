@@ -26,6 +26,9 @@ type quipu_storage      is [@layout:comb] record [
   permit_counter          : counter;
   permits                 : permits;
   default_expiry          : seconds;
+  total_mint_percent      : nat;
+  bob                     : address;
+  bobs_accumulator        : nat;
 ]
 
 type update_minter_param is [@layout:comb] record [
@@ -55,6 +58,7 @@ type quipu_action       is
   | Balance_of            of balance_params
   | Permit                of permit_param
   | Set_expiry            of set_expiry_param
+  | Accumulate            of nat
 
 [@inline] const no_operations : list(operation) = nil;
 [@inline] const accuracy : nat = 1000000n;

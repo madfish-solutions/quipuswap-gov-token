@@ -1,3 +1,7 @@
+require("ts-node").register({
+  files: true,
+});
+
 const { accounts } = require('./scripts/sandbox/accounts');
 const { accountsMap } = require('./scripts/sandbox/accounts');
 

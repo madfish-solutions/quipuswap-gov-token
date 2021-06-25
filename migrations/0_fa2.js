@@ -50,6 +50,10 @@ module.exports = async (tezos) => {
       tokens_ids: [],
       last_token_id: "0",
       admin: accounts[0],
+      permit_counter: "0",
+      permits: MichelsonMap.fromLiteral({}),
+      default_expiry: "0",
+      total_mint_percent: "0",
     }
   );
 
