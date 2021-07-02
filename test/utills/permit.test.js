@@ -78,8 +78,15 @@ describe('Permit', async function () {
   });
 
   it("bob generates permit payload, alice submits it to contract", async () => {
+    let transferParams = [{
+      from_: bob.pkh,
+      txs: [
+        { to_: carol.pkh, token_id: 0, amount: 5000 },
+      ],
+    }];
+
     let permitContractAlice = await tzAlice.contract.at(contractAddress);
-    let [bobsKey, bobsSig, permitHash] = await createPermitPayload(tzBob, fa2.contract, 'accumulate', 5);
+    let [bobsKey, bobsSig, permitHash] = await createPermitPayload(tzBob, fa2.contract, 'transfer', transferParams);
     let op = await permitContractAlice.methods.permit(bobsKey, bobsSig, permitHash).send();
     await op.confirmation();
 
@@ -88,29 +95,35 @@ describe('Permit', async function () {
     console.log(permitValue.has(permitHash));
   });
 
-    it("carol calls contract entrypoint on bob's behalf", async () => {
-      let permitContractCarol = await tzBob.contract.at(contractAddress);
-      let op = await permitContractCarol.methods.accumulate(5).send();
-      await op.confirmation();
+  it("carol calls contract entrypoint on bob's behalf", async () => {
+    let transferParams2 = [{
+      from_: bob.pkh,
+      txs: [
+        { to_: carol.pkh, token_id: 0, amount: 5000 },
+      ],
+    }];
 
-      let storage = await permitContractCarol.storage();
-      let permitValue = await storage.permits.get(bob.pkh).then(bobs_permits => bobs_permits.permits)
-      console.log(storage.bobs_accumulator == 5);
-      console.log(permitValue.size == 0);
-    });
+    let permitContractCarol = await tzCarol.contract.at(contractAddress);
+    let op = await permitContractCarol.methods.transfer(transferParams2).send();
+    await op.confirmation();
+
+    let storage = await permitContractCarol.storage();
+    let permitValue = await storage.permits.get(bob.pkh).then(bobs_permits => bobs_permits.permits)
+    console.log(permitValue)
+  });
 
   it("carol can't use bob's accumulator anymore", async () => {
-    let permitContractCarol = await tzBob.contract.at(contractAddress);
+    let permitContractCarol = await tzCarol.contract.at(contractAddress);
     try {
       let op = await permitContractCarol.methods.accumulate(6).send();
       await op.confirmation();
     } catch(e) {
       console.log(
-// TODO: add "bytes_to_sign" to the error message of permitted entrypoint
-`Error message ${e.errors[1].with.args[0].args[0].string}
-Packed parameter ${e.errors[1].with.args[0].args[1].bytes}
-Parameter hash ${e.errors[1].with.args[1].bytes}`)
+        // TODO: add "bytes_to_sign" to the error message of permitted entrypoint
+        `Error message ${e.errors[1].with.args[0].args[0].string}
+        Packed parameter ${e.errors[1].with.args[0].args[1].bytes}
+        Parameter hash ${e.errors[1].with.args[1].bytes}`
+      )
     }
   });
-
 });

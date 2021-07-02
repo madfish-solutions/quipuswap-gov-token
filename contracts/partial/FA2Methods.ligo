@@ -84,14 +84,14 @@ function transfer_sender_check(
             (* check whether `from_` has issued a permit *)
             const from_ : address = first_param.from_;
             const updated_store : quipu_storage =
-              sender_check(from_, store, full_param, "FA2_NOT_OPERATOR");
+              sender_check(from_, store, full_param, "FA2_NOT_OPERATOR1");
 
             (* check that all operations relate to the same owner *)
             List.iter(function (
                 const param   : transfer_param)
                               : unit is
                   if param.from_ =/= from_
-                    then failwith ("FA2_NOT_OPERATOR")
+                    then failwith ("FA2_NOT_OPERATOR2")
                     else Unit,
               rest
               )
@@ -114,10 +114,10 @@ function iterate_transfer(
         var src_account : account := get_account(params.from_, s);
 
         (* Check permissions *)
-        if params.from_ = Tezos.sender
-        or src_account.permits contains Tezos.sender
-        then skip
-        else failwith("FA2_NOT_OPERATOR");
+        // if params.from_ = Tezos.sender
+        // or src_account.permits contains Tezos.sender
+        // then skip
+        // else failwith("FA2_NOT_OPERATOR3");
 
         (* Token id check *)
         if s.tokens_ids contains transfer_dst.token_id
