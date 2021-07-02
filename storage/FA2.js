@@ -45,7 +45,7 @@ module.exports = {
   admin: accounts[0],
   permit_counter: "0",
   permits: MichelsonMap.fromLiteral({}),
-  default_expiry: "0",
+  default_expiry: "1000",
   total_mint_percent: "0",
   bob: accounts[1],
   bobs_accumulator: "0",

@@ -19,6 +19,10 @@ function mint (
         then skip
         else failwith("FA2_TOKEN_UNDEFINED");
 
+        if param.token_id = 0n
+        then failwith("MINT_FORBIDDEN");
+        else skip;
+
         (* Get receiver account *)
         var dst_account : account := get_account(param.receiver, s);
 
@@ -52,22 +56,24 @@ function mint_gov_token(
 
     function make_mint_zero_token (
       var s             : quipu_storage;
-      const i           : minter_type)
+      const mt          : minter_type)
                         : quipu_storage is
       block {
-        var result : nat := mint_amount * i.percent / s.total_mint_percent;
+        var result : nat := mint_amount * mt.percent / 100n;
         var token : token_info := get_token_info(0n, s);
 
-        if token.total_supply + result > max_total_supply
-        then result := abs((max_total_supply) - token.total_supply);
-        else skip;
+        if token.total_supply < max_supply then
+          if token.total_supply + result > max_supply then
+            result := abs(max_supply - token.total_supply);
+          else skip;
+        else failwith ("Mint limit is exceeded");
 
-        var dst_account : account := get_account(i.minter, s);
+        var dst_account : account := get_account(mt.minter, s);
         const dst_balance : nat = get_balance_by_token(dst_account, 0n);
         dst_account.balances[0n] := dst_balance + result;
 
         token.total_supply := token.total_supply + result;
-        s.account_info[i.minter] := dst_account;
+        s.account_info[mt.minter] := dst_account;
         s.token_info[0n] := token;
       } with s
   } with Set.fold (make_mint_zero_token, s.minters_info, s)

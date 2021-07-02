@@ -58,10 +58,9 @@ type quipu_action       is
   | Balance_of            of balance_params
   | Permit                of permit_param
   | Set_expiry            of set_expiry_param
-  | Accumulate            of nat
 
 [@inline] const no_operations : list(operation) = nil;
 [@inline] const accuracy : nat = 1000000n;
-[@inline] const max_total_supply : nat = 10000000n * accuracy;
+[@inline] const max_supply : nat = 10000000n * accuracy;
 [@inline] const zero_address : address =
   ("tz1ZZZZZZZZZZZZZZZZZZZZZZZZZZZZNkiRg" : address);
