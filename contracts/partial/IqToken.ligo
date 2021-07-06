@@ -20,7 +20,6 @@ type quipu_storage      is [@layout:comb] record [
   token_metadata          : big_map(token_id, token_metadata_info);
   minters                 : set(address);
   minters_info            : set(minter_type);
-  tokens_ids              : set(token_id);
   last_token_id           : nat;
   admin                   : address;
   permit_counter          : counter;

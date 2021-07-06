@@ -13,7 +13,7 @@ function mint (
       const param       : mint_param)
                         : quipu_storage is
       block {
-        if s.tokens_ids contains param.token_id
+        if param.token_id <= s.last_token_id
         then skip
         else failwith("FA2_TOKEN_UNDEFINED");
 
@@ -60,11 +60,9 @@ function mint_gov_token(
         var result : nat := mint_amount * mt.percent / 100n;
         var token : token_info := get_token_info(0n, s);
 
-        if token.total_supply < max_supply then
-          if token.total_supply + result > max_supply then
-            result := abs(max_supply - token.total_supply);
-          else skip;
-        else failwith ("Mint limit is exceeded");
+        if token.total_supply + result > max_supply
+        then result := abs(max_supply - token.total_supply);
+        else skip;
 
         var dst_account : account := get_account(mt.minter, s);
         const dst_balance : nat = get_balance_by_token(dst_account, 0n);
@@ -89,6 +87,5 @@ function create_token(
       token_id = s.last_token_id;
       token_info = create_params;
     ];
-    s.tokens_ids := Set.add(s.last_token_id, s.tokens_ids);
     s.last_token_id := s.last_token_id + 1n;
   } with s
