@@ -122,8 +122,10 @@ function iterate_transfer(
         (* Create or get source account *)
         var src_account : account := get_account(params.from_, s);
 
+
+
         (* Token id check *)
-        if s.tokens_ids contains transfer_dst.token_id
+        if transfer_dst.token_id <= s.last_token_id
         then skip
         else failwith("FA2_TOKEN_UNDEFINED");
 

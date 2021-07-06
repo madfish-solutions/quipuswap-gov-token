@@ -40,7 +40,6 @@ module.exports = {
   token_metadata: tokenMetadata,
   minters: [],
   minters_info: [],
-  tokens_ids: [0],
   last_token_id: "1",
   admin: accounts[1],
   permit_counter: "0",

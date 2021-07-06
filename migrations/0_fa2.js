@@ -35,7 +35,6 @@ module.exports = async (tezos) => {
       token_metadata: MichelsonMap.fromLiteral({}),
       minters: [],
       minters_info: [],
-      tokens_ids: [],
       last_token_id: "0",
       admin: accounts[0],
       permit_counter: "0",

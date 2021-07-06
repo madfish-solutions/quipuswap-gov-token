@@ -217,39 +217,39 @@ describe("Test Q token", async function () {
     console.log("Total balance [0]: ", await fa2.storage.token_info.get(0));
   });
 
-  it("mint max zero_tokens (by minter)", async () => {
-    tezos = await Utils.setProvider(tezos, carol.sk);
-    await fa2.mintZero(9999980000000);
-    await fa2.updateStorage();
+  // it("mint max zero_tokens (by minter)", async () => {
+  //   tezos = await Utils.setProvider(tezos, carol.sk);
+  //   await fa2.mintZero(9999980000000);
+  //   await fa2.updateStorage();
 
-    let getStorage = await fa2.storage.account_info.get(carol.pkh);
-    console.log("Carol balance: ", await getStorage.balances.get("0").toString());
+  //   let getStorage = await fa2.storage.account_info.get(carol.pkh);
+  //   console.log("Carol balance: ", await getStorage.balances.get("0").toString());
 
-    tezos = await Utils.setProvider(tezos, bob.sk);
-    await fa2.mintZero(10000000);
-    await fa2.updateStorage();
+  //   tezos = await Utils.setProvider(tezos, bob.sk);
+  //   await fa2.mintZero(10000000);
+  //   await fa2.updateStorage();
 
-    getStorage = await fa2.storage.account_info.get(bob.pkh);
-    console.log("Bob balance: ", await getStorage.balances.get("0").toString());
+  //   getStorage = await fa2.storage.account_info.get(bob.pkh);
+  //   console.log("Bob balance: ", await getStorage.balances.get("0").toString());
 
-    console.log("Total balance [0]: ", await fa2.storage.token_info.get(0));
-  });
+  //   console.log("Total balance [0]: ", await fa2.storage.token_info.get(0));
+  // });
 
-  it("mint more then max zero_tokens (by minter)", async () => {
-    try {
-      tezos = await Utils.setProvider(tezos, carol.sk);
-      await fa2.mintZero(1);
-      await fa2.updateStorage();
+  // it("mint more then max zero_tokens (by minter)", async () => {
+  //   try {
+  //     tezos = await Utils.setProvider(tezos, carol.sk);
+  //     await fa2.mintZero(1);
+  //     await fa2.updateStorage();
 
-      let getStorage = await fa2.storage.account_info.get(carol.pkh);
-      console.log(getStorage);
-      console.log("Carol balance: ", await getStorage.balances.get("0").toString());
+  //     let getStorage = await fa2.storage.account_info.get(carol.pkh);
+  //     console.log(getStorage);
+  //     console.log("Carol balance: ", await getStorage.balances.get("0").toString());
 
-      console.log("Total balance [0]: ", await fa2.storage.token_info.get(0).toString());
-    } catch (e) {
-      console.log("error max limit");
-    }
-  });
+  //     console.log("Total balance [0]: ", await fa2.storage.token_info.get(0).toString());
+  //   } catch (e) {
+  //     console.log("error max limit");
+  //   }
+  // });
 
   // // Permit part
 

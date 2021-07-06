@@ -51,7 +51,6 @@ class FA2 {
       token_metadata: storage.token_metadata,
       minters: storage.minters,
       minters_info: storage.minters_info,
-      tokens_ids: storage.tokens_ids,
       last_token_id: storage.last_token_id,
       admin: storage.admin,
       permit_counter: storage.permit_counter,
