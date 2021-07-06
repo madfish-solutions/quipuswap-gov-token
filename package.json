@@ -1,7 +1,7 @@
 {
-  "name": "qs-token",
+  "name": "qs-gov-token",
   "version": "1.0.0",
-  "description": "Token for QS",
+  "description": "QS-Gov-Token",
   "scripts": {
     "postinstall": "patch-package",
     "clean": "rm -rf ./build",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/madfish-solutions/temple-token.git"
+    "url": "git+https://github.com/madfish-solutions/quipuswap-gov-token"
   },
   "dependencies": {
     "@taquito/michelson-encoder": "^9.0.1",
@@ -35,9 +35,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/madfish-solutions/temple-token/issues"
+    "url": "https://github.com/madfish-solutions/quipuswap-gov-token/issues"
   },
-  "homepage": "https://github.com/madfish-solutions/temple-token#readme",
+  "homepage": "https://github.com/madfish-solutions/quipuswap-gov-token",
   "keywords": [
     "tezos",
     "ligo",

@@ -6,15 +6,6 @@ const { accounts } = require('./scripts/sandbox/accounts');
 const { accountsMap } = require('./scripts/sandbox/accounts');
 
 module.exports = {
-  // see <http://truffleframework.com/docs/advanced/configuration>
-  // for more details on how to specify configuration options!
-  // development: {
-  //   host: "http://136.244.96.28",
-  //   port: 8732,
-  //   network_id: "*",
-  //   secretKey: accountsMap.get(accounts[0]),
-  //   type: "tezos"
-  // },
   contracts_directory: "./contracts/main",
   networks: {
     development: {

@@ -43,6 +43,9 @@ type mint_param         is [@layout:comb] record [
     amount                : nat;
   ]
 
+type get_total_supply_params is
+  michelson_pair(token_id, "token_id", contract(nat), "")
+
 type mint_params        is list(mint_param)
 type return             is list(operation) * quipu_storage
 type new_token_params   is map(string, bytes)
@@ -56,6 +59,7 @@ type quipu_action       is
   | Transfer              of transfer_params
   | Update_operators      of update_operator_params
   | Balance_of            of balance_params
+  | Get_total_supply      of get_total_supply_params
   | Permit                of permit_param
   | Set_expiry            of set_expiry_param
 

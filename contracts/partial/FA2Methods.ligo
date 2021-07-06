@@ -23,6 +23,15 @@ function get_token_info(
   | Some(v) -> v
   end
 
+function get_total_supply(
+  const token_id        : token_id;
+  const contr           : contract(nat);
+  const s               : quipu_storage)
+                        : return is
+  block {
+    const res : token_info = get_token_info(token_id, s);
+  } with (list [Tezos.transaction(res.total_supply, 0tz, contr)], s)
+
 (* Helper function to get acount balance by token *)
 function get_balance_by_token(
   const user            : account;
@@ -112,12 +121,6 @@ function iterate_transfer(
       block {
         (* Create or get source account *)
         var src_account : account := get_account(params.from_, s);
-
-        (* Check permissions *)
-        // if params.from_ = Tezos.sender
-        // or src_account.permits contains Tezos.sender
-        // then skip
-        // else failwith("FA2_NOT_OPERATOR3");
 
         (* Token id check *)
         if s.tokens_ids contains transfer_dst.token_id

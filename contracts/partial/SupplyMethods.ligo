@@ -4,7 +4,6 @@ function mint (
   const params          : mint_params)
                         : quipu_storage is
   block {
-    (* Ensure sender has the minter permissions *)
     if s.admin = Tezos.sender
     then skip
     else failwith("NOT_ADMIN");
@@ -14,7 +13,6 @@ function mint (
       const param       : mint_param)
                         : quipu_storage is
       block {
-        (* Token id check *)
         if s.tokens_ids contains param.token_id
         then skip
         else failwith("FA2_TOKEN_UNDEFINED");
@@ -83,6 +81,10 @@ function create_token(
   const create_params   : new_token_params)
                         : quipu_storage is
   block {
+    if s.admin = Tezos.sender
+    then skip
+    else failwith("NOT_ADMIN");
+
     s.token_metadata[s.last_token_id] := record [
       token_id = s.last_token_id;
       token_info = create_params;
