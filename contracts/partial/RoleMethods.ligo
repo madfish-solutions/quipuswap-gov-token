@@ -1,15 +1,13 @@
-(* Set new pending admin *)
+(* Set new admin *)
 function update_admin(
   var s                 : quipu_storage;
   const new_admin       : address)
                         : quipu_storage is
   block {
-    (* Ensure sender has the admin permissions *)
     if Tezos.sender =/= s.admin
     then failwith("NOT_ADMIN")
     else skip;
 
-    (* Update storage *)
     s.admin := new_admin;
   } with s
 
@@ -23,11 +21,6 @@ function update_minter(
     then failwith("NOT_ADMIN")
     else skip;
 
-    // if param.percent < 1n or param.percent > 100n
-    // then failwith("WRONG_PERCENT")
-    // else skip;
-
-    (* Update storage *)
     if param.allowed then {
       s.minters := Set.add(param.minter, s.minters);
       var mt : minter_type := record [

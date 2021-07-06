@@ -24,18 +24,6 @@ const metadata = MichelsonMap.fromLiteral({
   ).toString("hex"),
 });
 
-// const tokenMetadata = MichelsonMap.fromLiteral({
-//   0: {
-//     token_id: "0",
-//     token_info: MichelsonMap.fromLiteral({
-//       symbol: Buffer.from("QSGV").toString("hex"),
-//       name: Buffer.from("QSGOV").toString("hex"),
-//       decimals: Buffer.from("6").toString("hex"),
-//       icon: Buffer.from("").toString("hex"),
-//     }),
-//   },
-// });
-
 module.exports = async (tezos) => {
   const contractAddress = await migrate(
     tezos,
