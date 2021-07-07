@@ -20,21 +20,16 @@ function set_minters(
     if Tezos.sender =/= s.admin
     then failwith("NOT_ADMIN")
     else skip;
-    const minters : set(address) = Set.empty;
+    const minters : map(address, nat) = map [];
     s.totalMinterShares := 0n;
-    s.minters := minters;
+    s.minters_info := minters;
 
     function set_minter(
       var s                 : quipu_storage;
       const param           : set_minter_param)
                             : quipu_storage is
       block {
-          s.minters := Set.add(param.minter, s.minters);
-          var mt : minter_type := record [
-            minter  = param.minter;
-            share = param.share;
-          ];
-          s.minters_info := Set.add(mt, s.minters_info);
+          s.minters_info[param.minter] := param.share;
           s.totalMinterShares := s.totalMinterShares + param.share;
       } with s
 
@@ -52,21 +47,11 @@ function update_minter(
     else skip;
 
     if param.share =/= 0n then {
-      s.minters := Set.add(param.minter, s.minters);
-      var mt : minter_type := record [
-        minter  = param.minter;
-        share = param.share;
-      ];
-      s.minters_info := Set.add(mt, s.minters_info);
+      s.minters_info[param.minter] := param.share;
       s.totalMinterShares := s.totalMinterShares + param.share;
     }
     else {
-      var mt : minter_type := record [
-          minter  = param.minter;
-          share = param.share;
-      ];
-      s.minters_info := Set.remove(mt, s.minters_info);
-      s.minters := Set.remove(param.minter, s.minters);
+      remove param.minter from map s.minters_info;
       s.totalMinterShares := abs(s.totalMinterShares - param.share);
     }
   } with s
