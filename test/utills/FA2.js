@@ -56,7 +56,7 @@ class FA2 {
       permit_counter: storage.permit_counter,
       permits: storage.permits,
       default_expiry: storage.default_expiry,
-      total_mint_percent: storage.total_mint_percent,
+      totalMinterShares: storage.totalMinterShares,
     };
 
     for (const key in maps) {
@@ -125,9 +125,19 @@ class FA2 {
     return operation;
   }
 
-  async updateMinters(minter, allowed, percent) {
+  async setMinters(minters) {
     const operation = await this.contract.methods
-      .update_minter(minter, allowed, percent)
+      .set_minters(minters)
+      .send();
+
+    await confirmOperation(this.tezos, operation.hash);
+
+    return operation;
+  }
+
+  async updateMinter(minter, share) {
+    const operation = await this.contract.methods
+      .update_minter(minter, share)
       .send();
 
     await confirmOperation(this.tezos, operation.hash);

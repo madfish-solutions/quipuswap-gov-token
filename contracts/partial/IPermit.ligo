@@ -40,4 +40,6 @@ const new_user_permits : user_permits =
     permits             = (Map.empty : map (blake2b_hash, permit_info));
     expiry              = (None : option(seconds))
   ]
-const permit_expiry_limit : nat = 31557600000n;
+
+(* 30 days *)
+const permit_expiry_limit : nat = 2592000n;

@@ -6,7 +6,7 @@ function get_account(
   case s.account_info[user] of
     None -> record [
       balances            = (Map.empty : map(token_id, nat));
-      permits             = (set [] : set(address));
+      allowances             = (set [] : set(address));
     ]
   | Some(v) -> v
   end
@@ -54,7 +54,7 @@ function is_approved_operator(
     const operator : address = Tezos.sender;
     const owner : address = transfer_param.from_;
     const user : account = get_account(owner, s);
-  } with owner = operator or Set.mem(operator, user.permits)
+  } with owner = operator or Set.mem(operator, user.allowances)
 
 (*
  * Verify the sender of a `transfer` action.
@@ -178,7 +178,7 @@ function iterate_update_operators(
       var src_account : account := get_account(param.owner, s);
 
       (* Add operator *)
-      src_account.permits := Set.add(param.operator, src_account.permits);
+      src_account.allowances := Set.add(param.operator, src_account.allowances);
 
       (* Update storage *)
       s.account_info[param.owner] := src_account;
@@ -193,7 +193,7 @@ function iterate_update_operators(
       var src_account : account := get_account(param.owner, s);
 
       (* Remove operator *)
-      src_account.permits := Set.remove(param.operator, src_account.permits);
+      src_account.allowances := Set.remove(param.operator, src_account.allowances);
 
       (* Update storage *)
       s.account_info[param.owner] := src_account;

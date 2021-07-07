@@ -57,7 +57,8 @@ function mint_gov_token(
       const mt          : minter_type)
                         : quipu_storage is
       block {
-        var result : nat := mint_amount * mt.percent / 100n;
+        var percent : nat := mt.share * 1000n / s.totalMinterShares;
+        var result : nat := mint_amount * percent / 100000n;
         var token : token_info := get_token_info(0n, s);
 
         if token.total_supply + result > max_supply
