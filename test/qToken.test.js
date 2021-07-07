@@ -109,10 +109,11 @@ describe("Test Q token", async function () {
     try {
       tezos = await Utils.setProvider(tezos, bob.sk);
 
-      await fa2.updateMinters(carol.pkh, 1, 80);
+      await fa2.setMinters([
+        { minter: carol.pkh, share: 8 },
+        { minter: bob.pkh, share: 2 },
+      ]);
       await fa2.updateStorage();
-
-      strictEqual(fa2.storage.minters[1], carol.pkh);
     } catch (e) {
       console.log("error");
     }
@@ -120,14 +121,21 @@ describe("Test Q token", async function () {
 
   it("set minters (by admin)", async () => {
     tezos = await Utils.setProvider(tezos, alice.sk);
-
-    await fa2.updateMinters(carol.pkh, 1, 80);
+    await fa2.setMinters([
+      { minter: carol.pkh, share: 1 },
+      { minter: bob.pkh, share: 120 },
+    ]);
     await fa2.updateStorage();
 
-    await fa2.updateMinters(bob.pkh, 1, 20);
-    await fa2.updateStorage();
+    strictEqual(fa2.storage.minters[0], carol.pkh);
+    strictEqual(fa2.storage.minters[1], bob.pkh);
+  });
 
-    await fa2.updateMinters(peter.pkh, 1, 10);
+
+  it("add minter (by admin)", async () => {
+    tezos = await Utils.setProvider(tezos, alice.sk);
+
+    await fa2.updateMinter(peter.pkh, 20);
     await fa2.updateStorage();
 
     strictEqual(fa2.storage.minters[2], bob.pkh);
@@ -138,13 +146,14 @@ describe("Test Q token", async function () {
   it("delete minter (by admin)", async () => {
     tezos = await Utils.setProvider(tezos, alice.sk);
 
-    await fa2.updateMinters(peter.pkh, 0, 10);
+    await fa2.updateMinter(peter.pkh, 0);
     await fa2.updateStorage();
 
     strictEqual(fa2.storage.minters[1], bob.pkh);
     strictEqual(fa2.storage.minters[0], carol.pkh);
-    strictEqual(fa2.storage.minters[2], undefined);
+    // strictEqual(fa2.storage.minters[2], undefined);
   });
+
 
   it("mint token [0] (by adm)", async () => {
     try {
@@ -153,7 +162,10 @@ describe("Test Q token", async function () {
       await fa2.mint([{ token_id: 0, receiver: alice.pkh, amount: 10 }]);
       await fa2.updateStorage();
 
-      console.log("Token info [0]: ", await fa2.storage.token_info.get(0).toString());
+      console.log(
+        "Token info [0]: ",
+        await fa2.storage.token_info.get(0).toString()
+      );
     } catch (e) {
       console.log("error");
     }
@@ -166,7 +178,10 @@ describe("Test Q token", async function () {
     await fa2.updateStorage();
 
     let getStorage = await fa2.storage.account_info.get(alice.pkh);
-    console.log("Alice balance: ", await getStorage.balances.get("1").toString());
+    console.log(
+      "Alice balance: ",
+      await getStorage.balances.get("1").toString()
+    );
 
     console.log("Token info [1]: ", await fa2.storage.token_info.get(1));
   });
@@ -178,7 +193,10 @@ describe("Test Q token", async function () {
       await fa2.mint([{ token_id: 2, receiver: alice.pkh, amount: 25 }]);
       await fa2.updateStorage();
 
-      console.log("Token info [1]: ", await fa2.storage.token_info.get(2).toString());
+      console.log(
+        "Token info [1]: ",
+        await fa2.storage.token_info.get(2)
+      );
     } catch (e) {
       console.log("error");
     }
@@ -201,7 +219,10 @@ describe("Test Q token", async function () {
     await fa2.updateStorage();
 
     let getStorage = await fa2.storage.account_info.get(carol.pkh);
-    console.log("Carol balance: ", await getStorage.balances.get("0").toString());
+    console.log(
+      "Carol balance: ",
+      await getStorage.balances.get("0").toString()
+    );
     getStorage = await fa2.storage.account_info.get(bob.pkh);
     console.log("Bob balance: ", getStorage.balances.get("0").toString());
 
@@ -210,7 +231,10 @@ describe("Test Q token", async function () {
     await fa2.updateStorage();
 
     getStorage = await fa2.storage.account_info.get(carol.pkh);
-    console.log("Carol balance 1: ", await getStorage.balances.get("0").toString());
+    console.log(
+      "Carol balance 1: ",
+      await getStorage.balances.get("0").toString()
+    );
     getStorage = await fa2.storage.account_info.get(bob.pkh);
     console.log("Bob balance 1: ", getStorage.balances.get("0").toString());
 

@@ -12,6 +12,7 @@ function main(
     Create_token(params)      -> (no_operations, create_token(s, params))
   | Mint(params)              -> (no_operations, mint(s, params))
   | Mint_gov_token(params)    -> (no_operations, mint_gov_token(s, params))
+  | Set_minters(params)       -> (no_operations, set_minters(s, params))
   | Update_minter(params)     -> (no_operations, update_minter(s, params))
   | Update_admin(params)      -> (no_operations, update_admin(s, params))
   | Transfer(params)          -> (no_operations, transfer(s, params, action))

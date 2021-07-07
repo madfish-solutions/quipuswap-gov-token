@@ -45,7 +45,7 @@ module.exports = {
   permit_counter: "0",
   permits: MichelsonMap.fromLiteral({}),
   default_expiry: "1000",
-  total_mint_percent: "0",
+  totalMinterShares: "0",
   bob: accounts[1],
   bobs_accumulator: "0",
 };
