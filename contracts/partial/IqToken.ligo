@@ -18,8 +18,7 @@ type quipu_storage      is [@layout:comb] record [
   token_info              : big_map(token_id, token_info);
   metadata                : big_map(string, bytes);
   token_metadata          : big_map(token_id, token_metadata_info);
-  minters                 : set(address);
-  minters_info            : set(minter_type);
+  minters_info            : map(address, nat);
   last_token_id           : nat;
   admin                   : address;
   permit_counter          : counter;

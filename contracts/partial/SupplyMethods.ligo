@@ -1,3 +1,9 @@
+[@inline] function checkMinter (const minter : address; const s : quipu_storage) : nat is
+  case s.minters_info[minter] of
+    | Some(v) -> v
+    | None -> (failwith("NOT_MINTER") : nat)
+  end;
+
 (* Perform minting new tokens *)
 function mint (
   const s               : quipu_storage;
@@ -13,7 +19,7 @@ function mint (
       const param       : mint_param)
                         : quipu_storage is
       block {
-        if param.token_id <= s.last_token_id
+        if param.token_id <= abs(s.last_token_id - 1n)
         then skip
         else failwith("FA2_TOKEN_UNDEFINED");
 
@@ -48,16 +54,14 @@ function mint_gov_token(
   const mint_amount     : nat)
                         : quipu_storage is
   block {
-    if s.minters contains Tezos.sender
-    then skip
-    else failwith("NOT_MINTER");
+    const _shares : nat = checkMinter(Tezos.sender, s);
 
     function make_mint_zero_token (
       var s             : quipu_storage;
-      const mt          : minter_type)
+      const mt          : address * nat)
                         : quipu_storage is
       block {
-        var percent : nat := mt.share * 1000n / s.totalMinterShares;
+        var percent : nat := mt.1 * 1000n / s.totalMinterShares;
         var result : nat := mint_amount * percent / 100000n;
         var token : token_info := get_token_info(0n, s);
 
@@ -65,15 +69,15 @@ function mint_gov_token(
         then result := abs(max_supply - token.total_supply);
         else skip;
 
-        var dst_account : account := get_account(mt.minter, s);
+        var dst_account : account := get_account(mt.0, s);
         const dst_balance : nat = get_balance_by_token(dst_account, 0n);
         dst_account.balances[0n] := dst_balance + result;
 
         token.total_supply := token.total_supply + result;
-        s.account_info[mt.minter] := dst_account;
+        s.account_info[mt.0] := dst_account;
         s.token_info[0n] := token;
       } with s
-  } with Set.fold (make_mint_zero_token, s.minters_info, s)
+  } with Map.fold (make_mint_zero_token, s.minters_info, s)
 
 function create_token(
   var s                 : quipu_storage;
