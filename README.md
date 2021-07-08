@@ -1,6 +1,6 @@
 # Quipu Governance Token
 
-# Description
+## Description
 
 FA2 token with capped but dynamic supply.
 
@@ -13,7 +13,7 @@ If 10 tokens are minted for **future partnership** then the other 5 tokens are m
 
 To sum up, the tokens can't be minted only to one funds. If one of the funds increases the others grow proportionally.
 
-**Total fixed supply:** 10 000 000
+**Total fixed supply:** 10 000 000 </br>
 **Decimal:** 6
 
 # Project structure
