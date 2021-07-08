@@ -431,4 +431,57 @@ describe("Test Q token", async function () {
       console.log("Error message");
     }
   });
+
+  it("bob generates permit, alice submits it, bob sets expiry", async () => {
+    let transferParams = [
+      {
+        from_: bob.pkh,
+        txs: [{ to_: alice.pkh, token_id: 0, amount: 11 }],
+      },
+    ];
+
+    let permitContractAlice = await tzAlice.contract.at(contractAddress);
+    let [bobsKey, bobsSig, permitHash] = await createPermitPayload(
+      tzBob,
+      fa2.contract,
+      "transfer",
+      transferParams
+    );
+    let op = await permitContractAlice.methods
+      .permit(bobsKey, bobsSig, permitHash)
+      .send();
+    await op.confirmation();
+
+    const permitContractBob = await tzBob.contract.at(contractAddress)
+    op = await permitContractBob.methods.set_expiry(bob.pkh, 60, permitHash).send();
+    await op.confirmation();
+
+    let storage = await permitContractAlice.storage();
+    let permitValue = await storage.permits
+      .get(bob.pkh)
+      .then((bobs_permits) => bobs_permits.permits);
+    console.log(permitValue.has(permitHash));
+
+    console.log("permit value",permitValue)
+
+    let permitExpiry = await storage.permits
+      .get(bob.pkh)
+      .then((bobs_permits) => bobs_permits.expiry);
+
+    let permit = await permitValue.get(permitHash)
+    strictEqual(permit.expiry.toNumber(), 60);
+  });
+
+  it("carol calls entrypoint on bob's behalf, but its too late", async () => {
+    let transferParams2 = [
+      {
+        from_: bob.pkh,
+        txs: [{ to_: alice.pkh, token_id: 0, amount: 11 }],
+      },
+    ];
+
+    let permitContractCarol = await tzCarol.contract.at(contractAddress);
+
+    rejects(await permitContractCarol.methods.transfer(transferParams2).send())
+  });
 });
