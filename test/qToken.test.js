@@ -215,7 +215,7 @@ describe("Test Q token", async function () {
   it("mint zero_tokens (by minter)", async () => {
     console.log("Total balance [0]: ", await fa2.storage.token_info.get(0));
     tezos = await Utils.setProvider(tezos, carol.sk);
-    await fa2.mintZero(5000000);
+    await fa2.mintZero(1000);
     await fa2.updateStorage();
 
     let getStorage = await fa2.storage.account_info.get(carol.pkh);
@@ -227,7 +227,7 @@ describe("Test Q token", async function () {
     console.log("Bob balance: ", getStorage.balances.get("0").toString());
 
     tezos = await Utils.setProvider(tezos, bob.sk);
-    await fa2.mintZero(5000000);
+    await fa2.mintZero(1000);
     await fa2.updateStorage();
 
     getStorage = await fa2.storage.account_info.get(carol.pkh);
