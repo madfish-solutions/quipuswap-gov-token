@@ -123,7 +123,7 @@ describe("Test Q token", async function () {
     tezos = await Utils.setProvider(tezos, alice.sk);
     await fa2.setMinters([
       { minter: carol.pkh, share: 1 },
-      { minter: bob.pkh, share: 120 },
+      { minter: bob.pkh, share: 20 },
     ]);
     await fa2.updateStorage();
 
@@ -131,11 +131,13 @@ describe("Test Q token", async function () {
     // strictEqual(fa2.storage.minters[1], bob.pkh);
   });
 
-
   it("add minter (by admin)", async () => {
     tezos = await Utils.setProvider(tezos, alice.sk);
 
-    await fa2.updateMinter(peter.pkh, 20);
+    await fa2.updateMinter(bob.pkh, 120);
+    await fa2.updateStorage();
+
+    await fa2.updateMinter(peter.pkh, 10);
     await fa2.updateStorage();
 
     // strictEqual(fa2.storage.minters[2], bob.pkh);
@@ -153,7 +155,6 @@ describe("Test Q token", async function () {
     // strictEqual(fa2.storage.minters[0], carol.pkh);
     // strictEqual(fa2.storage.minters[2], undefined);
   });
-
 
   it("mint token [0] (by adm)", async () => {
     try {
@@ -193,10 +194,7 @@ describe("Test Q token", async function () {
       await fa2.mint([{ token_id: 2, receiver: alice.pkh, amount: 25 }]);
       await fa2.updateStorage();
 
-      console.log(
-        "Token info [2]: ",
-        await fa2.storage.token_info.get(2)
-      );
+      console.log("Token info [2]: ", await fa2.storage.token_info.get(2));
     } catch (e) {
       console.log("error");
     }

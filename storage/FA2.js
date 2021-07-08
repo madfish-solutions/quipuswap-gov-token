@@ -1,6 +1,6 @@
 const { MichelsonMap } = require("@taquito/michelson-encoder");
 
-const { accounts } = require('../scripts/sandbox/accounts');
+const { accounts } = require("../scripts/sandbox/accounts");
 
 const metadata = MichelsonMap.fromLiteral({
   "": Buffer.from("tezos-storage:paul", "ascii").toString("hex"),
@@ -44,7 +44,7 @@ module.exports = {
   permit_counter: "0",
   permits: MichelsonMap.fromLiteral({}),
   default_expiry: "1000",
-  totalMinterShares: "0",
+  total_minter_shares: "0",
   bob: accounts[1],
   bobs_accumulator: "0",
 };

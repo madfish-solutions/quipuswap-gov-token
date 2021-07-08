@@ -1,7 +1,10 @@
-[@inline] function check_minter (const minter : address; const s : quipu_storage) : nat is
+[@inline] function minter_shares (
+  const minter          : address;
+  const s               : quipu_storage)
+                        : nat is
   case s.minters_info[minter] of
     | Some(v) -> v
-    | None -> (failwith("NOT_MINTER") : nat)
+    | None -> 0n
   end;
 
 (* Set new admin *)
@@ -27,7 +30,7 @@ function set_minters(
     then failwith("NOT_ADMIN")
     else skip;
     const minters : map(address, nat) = map [];
-    s.totalMinterShares := 0n;
+    s.total_minter_shares := 0n;
     s.minters_info := minters;
 
     function set_minter(
@@ -36,7 +39,7 @@ function set_minters(
                             : quipu_storage is
       block {
           s.minters_info[param.minter] := param.share;
-          s.totalMinterShares := s.totalMinterShares + param.share;
+          s.total_minter_shares := s.total_minter_shares + param.share;
       } with s
 
   } with (List.fold(set_minter, params, s))
@@ -53,13 +56,21 @@ function update_minter(
     else skip;
 
     if param.share =/= 0n then {
+      const share : nat = minter_shares(param.minter, s);
+      if share > 0n
+      then block {
+        s.total_minter_shares := abs(s.total_minter_shares - share);
+        remove param.minter from map s.minters_info;
+      }
+      else skip;
+
       s.minters_info[param.minter] := param.share;
-      s.totalMinterShares := s.totalMinterShares + param.share;
+      s.total_minter_shares := s.total_minter_shares + param.share;
     }
     else {
-      const share : nat = check_minter(param.minter, s);
+      const share : nat = minter_shares(param.minter, s);
 
       remove param.minter from map s.minters_info;
-      s.totalMinterShares := abs(s.totalMinterShares - share);
+      s.total_minter_shares := abs(s.total_minter_shares - share);
     }
   } with s

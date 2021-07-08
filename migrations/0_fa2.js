@@ -1,7 +1,6 @@
-const { accounts } = require('../scripts/sandbox/accounts');
+const { accounts } = require("../scripts/sandbox/accounts");
 const { migrate } = require("../scripts/helpers");
 const { MichelsonMap } = require("@taquito/michelson-encoder");
-
 
 const totalSupply = "10000000";
 
@@ -25,23 +24,19 @@ const metadata = MichelsonMap.fromLiteral({
 });
 
 module.exports = async (tezos) => {
-  const contractAddress = await migrate(
-    tezos,
-    "FA2",
-    {
-      account_info: MichelsonMap.fromLiteral({}),
-      token_info: MichelsonMap.fromLiteral({}),
-      metadata: metadata,
-      token_metadata: MichelsonMap.fromLiteral({}),
-      minters_info: MichelsonMap.fromLiteral({}),
-      last_token_id: "0",
-      admin: accounts[0],
-      permit_counter: "0",
-      permits: MichelsonMap.fromLiteral({}),
-      default_expiry: "1000",
-      totalMinterShares: "0",
-    }
-  );
+  const contractAddress = await migrate(tezos, "FA2", {
+    account_info: MichelsonMap.fromLiteral({}),
+    token_info: MichelsonMap.fromLiteral({}),
+    metadata: metadata,
+    token_metadata: MichelsonMap.fromLiteral({}),
+    minters_info: MichelsonMap.fromLiteral({}),
+    last_token_id: "0",
+    admin: accounts[0],
+    permit_counter: "0",
+    permits: MichelsonMap.fromLiteral({}),
+    default_expiry: "1000",
+    total_minter_shares: "0",
+  });
 
   console.log(`FA2 token: ${contractAddress}`);
 };
