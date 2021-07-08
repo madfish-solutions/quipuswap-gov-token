@@ -127,8 +127,8 @@ describe("Test Q token", async function () {
     ]);
     await fa2.updateStorage();
 
-    // strictEqual(fa2.storage.minters[0], carol.pkh);
-    // strictEqual(fa2.storage.minters[1], bob.pkh);
+    strictEqual(await fa2.storage.minters_info.get(bob.pkh).toString(), "20");
+    strictEqual(await fa2.storage.minters_info.get(carol.pkh).toString(), "1");
   });
 
   it("add minter (by admin)", async () => {
@@ -140,9 +140,9 @@ describe("Test Q token", async function () {
     await fa2.updateMinter(peter.pkh, 10);
     await fa2.updateStorage();
 
-    // strictEqual(fa2.storage.minters[2], bob.pkh);
-    // strictEqual(fa2.storage.minters[1], peter.pkh);
-    // strictEqual(fa2.storage.minters[0], carol.pkh);
+    strictEqual(await fa2.storage.minters_info.get(bob.pkh).toString(), "120");
+    strictEqual(await fa2.storage.minters_info.get(carol.pkh).toString(), "1");
+    strictEqual(await fa2.storage.minters_info.get(peter.pkh).toString(), "10");
   });
 
   it("delete minter (by admin)", async () => {
@@ -151,9 +151,9 @@ describe("Test Q token", async function () {
     await fa2.updateMinter(peter.pkh, 0);
     await fa2.updateStorage();
 
-    // strictEqual(fa2.storage.minters[1], bob.pkh);
-    // strictEqual(fa2.storage.minters[0], carol.pkh);
-    // strictEqual(fa2.storage.minters[2], undefined);
+    strictEqual(await fa2.storage.minters_info.get(bob.pkh).toString(), "120");
+    strictEqual(await fa2.storage.minters_info.get(carol.pkh).toString(), "1");
+    strictEqual(await fa2.storage.minters_info.get(peter.pkh), undefined);
   });
 
   it("mint token [0] (by adm)", async () => {
@@ -211,7 +211,10 @@ describe("Test Q token", async function () {
   });
 
   it("mint zero_tokens (by minter)", async () => {
-    console.log("Total balance [0]: ", await fa2.storage.token_info.get(0));
+    console.log(
+      "Total balance [0] before minting: ",
+      await fa2.storage.token_info.get(0)
+    );
     tezos = await Utils.setProvider(tezos, carol.sk);
     await fa2.mintZero(1000);
     await fa2.updateStorage();
@@ -230,48 +233,80 @@ describe("Test Q token", async function () {
 
     getStorage = await fa2.storage.account_info.get(carol.pkh);
     console.log(
-      "Carol balance 1: ",
+      "Carol balance after one more mint: ",
       await getStorage.balances.get("0").toString()
     );
     getStorage = await fa2.storage.account_info.get(bob.pkh);
-    console.log("Bob balance 1: ", getStorage.balances.get("0").toString());
+    console.log(
+      "Bob balance after one more mint: ",
+      getStorage.balances.get("0").toString()
+    );
 
-    console.log("Total balance [0]: ", await fa2.storage.token_info.get(0));
+    console.log(
+      "Total balance [0] after mint Bob and Carol: ",
+      await fa2.storage.token_info.get(0)
+    );
   });
 
-  // it("mint max zero_tokens (by minter)", async () => {
-  //   tezos = await Utils.setProvider(tezos, carol.sk);
-  //   await fa2.mintZero(9999980000000);
-  //   await fa2.updateStorage();
+  it("mint max zero_tokens (by minter)", async () => {
+    tezos = await Utils.setProvider(tezos, carol.sk);
+    await fa2.mintZero(9999999997000);
+    await fa2.updateStorage();
 
-  //   let getStorage = await fa2.storage.account_info.get(carol.pkh);
-  //   console.log("Carol balance: ", await getStorage.balances.get("0").toString());
+    let getStorage = await fa2.storage.account_info.get(carol.pkh);
+    console.log(
+      "Carol balance: ",
+      await getStorage.balances.get("0").toString()
+    );
 
-  //   tezos = await Utils.setProvider(tezos, bob.sk);
-  //   await fa2.mintZero(10000000);
-  //   await fa2.updateStorage();
+    console.log(
+      "Total balance [0] after Carol mint: ",
+      await fa2.storage.token_info.get(0)
+    );
 
-  //   getStorage = await fa2.storage.account_info.get(bob.pkh);
-  //   console.log("Bob balance: ", await getStorage.balances.get("0").toString());
+    tezos = await Utils.setProvider(tezos, bob.sk);
+    await fa2.mintZero(1004);
+    await fa2.updateStorage();
 
-  //   console.log("Total balance [0]: ", await fa2.storage.token_info.get(0));
-  // });
+    getStorage = await fa2.storage.account_info.get(bob.pkh);
+    console.log("Bob balance: ", await getStorage.balances.get("0").toString());
 
-  // it("mint more then max zero_tokens (by minter)", async () => {
-  //   try {
-  //     tezos = await Utils.setProvider(tezos, carol.sk);
-  //     await fa2.mintZero(1);
-  //     await fa2.updateStorage();
+    console.log(
+      "Total balance [0] after Bob mint: ",
+      await fa2.storage.token_info.get(0)
+    );
+  });
 
-  //     let getStorage = await fa2.storage.account_info.get(carol.pkh);
-  //     console.log(getStorage);
-  //     console.log("Carol balance: ", await getStorage.balances.get("0").toString());
+  it("mint more then max zero_tokens (by minter)", async () => {
+    try {
+      tezos = await Utils.setProvider(tezos, carol.sk);
+      await fa2.mintZero(20000);
+      await fa2.updateStorage();
 
-  //     console.log("Total balance [0]: ", await fa2.storage.token_info.get(0).toString());
-  //   } catch (e) {
-  //     console.log("error max limit");
-  //   }
-  // });
+      let getStorage = await fa2.storage.account_info.get(carol.pkh);
+      console.log(
+        "Carol balance 1: ",
+        await getStorage.balances.get("0").toString()
+      );
+
+      tezos = await Utils.setProvider(tezos, carol.sk);
+      await fa2.mintZero(20000);
+      await fa2.updateStorage();
+
+      getStorage = await fa2.storage.account_info.get(carol.pkh);
+      console.log(
+        "Carol balance 2: ",
+        await getStorage.balances.get("0").toString()
+      );
+
+      console.log(
+        "Total balance [0] after Carol mint: ",
+        await fa2.storage.token_info.get(0)
+      );
+    } catch (e) {
+      console.log("error max limit");
+    }
+  });
 
   // // Permit part
 

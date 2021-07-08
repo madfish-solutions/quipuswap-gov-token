@@ -16,7 +16,9 @@ function main(
   | Update_minter(params)     -> (no_operations, update_minter(s, params))
   | Update_admin(params)      -> (no_operations, update_admin(s, params))
   | Transfer(params)          -> (no_operations, transfer(s, params, action))
-  | Update_operators(params)  -> (no_operations, update_operators(s, params, action))
+  | Update_operators(params)  -> (no_operations, update_operators(s,
+                                                                  params,
+                                                                  action))
   | Balance_of(params)        -> (get_balance_of(params, s), s)
   | Get_total_supply(params)  -> get_total_supply(params.0, params.1, s)
   | Permit(params)            -> add_permit(params, s)
