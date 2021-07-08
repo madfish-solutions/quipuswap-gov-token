@@ -1,3 +1,12 @@
+[@inline] function check_minter (
+  const minter          : address;
+  const s               : quipu_storage)
+                        : nat is
+  case s.minters_info[minter] of
+    | Some(v) -> v
+    | None -> (failwith("NOT_MINTER") : nat)
+  end;
+
 (* Perform minting new tokens *)
 function mint (
   const s               : quipu_storage;
@@ -55,7 +64,7 @@ function mint_gov_token(
       const mt          : address * nat)
                         : quipu_storage is
       block {
-        var result : nat := mt.1 * mint_amount / s.totalMinterShares;
+        var result : nat := mt.1 * mint_amount / s.total_minter_shares;
         var token : token_info := get_token_info(0n, s);
 
         if token.total_supply + result > max_supply
