@@ -1,3 +1,9 @@
+[@inline] function check_minter (const minter : address; const s : quipu_storage) : nat is
+  case s.minters_info[minter] of
+    | Some(v) -> v
+    | None -> (failwith("NOT_MINTER") : nat)
+  end;
+
 (* Set new admin *)
 function update_admin(
   var s                 : quipu_storage;
@@ -51,7 +57,9 @@ function update_minter(
       s.totalMinterShares := s.totalMinterShares + param.share;
     }
     else {
+      const share : nat = check_minter(param.minter, s);
+
       remove param.minter from map s.minters_info;
-      s.totalMinterShares := abs(s.totalMinterShares - param.share);
+      s.totalMinterShares := abs(s.totalMinterShares - share);
     }
   } with s
