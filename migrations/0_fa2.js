@@ -2,8 +2,6 @@ const { accounts } = require("../scripts/sandbox/accounts");
 const { migrate } = require("../scripts/helpers");
 const { MichelsonMap } = require("@taquito/michelson-encoder");
 
-const totalSupply = "10000000";
-
 const metadata = MichelsonMap.fromLiteral({
   "": Buffer.from("tezos-storage:qs", "ascii").toString("hex"),
   qs: Buffer.from(
@@ -23,14 +21,26 @@ const metadata = MichelsonMap.fromLiteral({
   ).toString("hex"),
 });
 
+const tokenMetadata = MichelsonMap.fromLiteral({
+  0: {
+    token_id: "0",
+    token_info: MichelsonMap.fromLiteral({
+      symbol: Buffer.from("QSG").toString("hex"),
+      name: Buffer.from("QSGOV").toString("hex"),
+      decimals: Buffer.from("6").toString("hex"),
+      icon: Buffer.from("").toString("hex"),
+    }),
+  },
+});
+
 module.exports = async (tezos) => {
   const contractAddress = await migrate(tezos, "FA2", {
     account_info: MichelsonMap.fromLiteral({}),
     token_info: MichelsonMap.fromLiteral({}),
     metadata: metadata,
-    token_metadata: MichelsonMap.fromLiteral({}),
+    token_metadata: tokenMetadata,
     minters_info: MichelsonMap.fromLiteral({}),
-    last_token_id: "0",
+    last_token_id: "1",
     admin: accounts[0],
     permit_counter: "0",
     permits: MichelsonMap.fromLiteral({}),

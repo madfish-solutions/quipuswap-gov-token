@@ -1,5 +1,5 @@
-const { accounts } = require('../scripts/sandbox/accounts');
-const { accountsMap } = require('../scripts/sandbox/accounts');
+const { accounts } = require("../scripts/sandbox/accounts");
+const { accountsMap } = require("../scripts/sandbox/accounts");
 
 require("dotenv").config();
 require("ts-node").register({
