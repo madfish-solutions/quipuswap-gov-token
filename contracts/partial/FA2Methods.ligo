@@ -6,7 +6,7 @@ function get_account(
   case s.account_info[user] of
     None -> record [
       balances            = (Map.empty : map(token_id, nat));
-      allowances             = (set [] : set(address));
+      allowances          = (set [] : set(address));
     ]
   | Some(v) -> v
   end
@@ -122,8 +122,6 @@ function iterate_transfer(
         (* Create or get source account *)
         var src_account : account := get_account(params.from_, s);
 
-
-
         (* Token id check *)
         if transfer_dst.token_id <= s.last_token_id
         then skip
@@ -193,7 +191,10 @@ function iterate_update_operators(
       var src_account : account := get_account(param.owner, s);
 
       (* Remove operator *)
-      src_account.allowances := Set.remove(param.operator, src_account.allowances);
+      src_account.allowances := Set.remove(
+        param.operator,
+        src_account.allowances
+      );
 
       (* Update storage *)
       s.account_info[param.owner] := src_account;

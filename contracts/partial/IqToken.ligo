@@ -24,7 +24,7 @@ type quipu_storage      is [@layout:comb] record [
   permit_counter          : counter;
   permits                 : permits;
   default_expiry          : seconds;
-  total_minter_shares       : nat;
+  total_minter_shares     : nat;
   bob                     : address;
   bobs_accumulator        : nat;
 ]

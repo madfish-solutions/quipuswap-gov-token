@@ -160,7 +160,8 @@ function add_permit(
 
 (*
  * Sets the default expiry for a user.
- * If the user already had an expiry set, the old expiry is overriden by the new one.
+ * If the user already had an expiry set, the old expiry is overriden by
+ * the new one.
  *)
 function set_user_default_expiry(
   const user            : address;
