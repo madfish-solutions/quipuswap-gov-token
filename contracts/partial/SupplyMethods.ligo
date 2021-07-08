@@ -22,7 +22,7 @@ function mint (
       const param       : mint_param)
                         : quipu_storage is
       block {
-        if param.token_id <= abs(s.last_token_id - 1n)
+        if param.token_id < s.last_token_id
         then skip
         else failwith("FA2_TOKEN_UNDEFINED");
 
