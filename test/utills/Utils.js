@@ -1,5 +1,5 @@
-const { accounts } = require('../../scripts/sandbox/accounts');
-const { accountsMap } = require('../../scripts/sandbox/accounts');
+const { alice } = require('../../scripts/sandbox/accounts2');
+
 
 require("dotenv").config();
 require("ts-node").register({
@@ -22,7 +22,7 @@ class Utils {
       config: {
         confirmationPollingTimeoutSecond: env.confirmationPollingTimeoutSecond,
       },
-      signer: await InMemorySigner.fromSecretKey(accountsMap.get(accounts[0])),
+      signer: await InMemorySigner.fromSecretKey(alice.sk),
     });
 
     return tezos;

@@ -1,7 +1,6 @@
 require("dotenv").config();
 
-const { accounts } = require("./scripts/sandbox/accounts");
-const { accountsMap } = require("./scripts/sandbox/accounts");
+const { alice } = require("./scripts/sandbox/accounts2");
 
 module.exports = {
   outputFile: "output.txt",
@@ -18,19 +17,19 @@ module.exports = {
       host: "http://136.244.96.28",
       port: 8732,
       network_id: "*",
-      secretKey: accountsMap.get(accounts[0]),
+      secretKey: alice.pkh,
     },
     florencenet: {
       host: "https://testnet-tezos.giganode.io",
       port: 443,
       network_id: "*",
-      secretKey: accountsMap.get(accounts[0]),
+      secretKey: alice.pkh,
     },
     mainnet: {
       host: "https://mainnet.smartpy.io",
       port: 443,
       network_id: "*",
-      secretKey: accountsMap.get(accounts[0]),
+      secretKey: alice.pkh,
     },
   },
 };

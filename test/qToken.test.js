@@ -2,20 +2,16 @@ const { MichelsonMap } = require("@taquito/michelson-encoder");
 const { InMemorySigner } = require("@taquito/signer");
 const { TezosToolkit } = require("@taquito/taquito");
 
-const { accounts } = require("../scripts/sandbox/accounts");
-const { accountsMap } = require("../scripts/sandbox/accounts");
 const { alice, bob, carol, peter } = require("../scripts/sandbox/accounts2");
 
-const { rejects, ok, strictEqual } = require("assert");
+const { rejects, strictEqual } = require("assert");
 
 const { FA2 } = require("../test/utills/FA2");
 const { Utils } = require("../test/utills/Utils");
 
 const { confirmOperation } = require("../scripts/confirmation");
-const { minters } = require("../storage/FA2");
-const BigNumber = require("bignumber.js");
 
-const { buf2hex, hex2buf } = require("@taquito/utils");
+const { hex2buf } = require("@taquito/utils");
 const blake = require("blakejs");
 
 const tokenMetadata = MichelsonMap.fromLiteral({
