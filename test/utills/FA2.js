@@ -107,8 +107,8 @@ class FA2 {
     return operation;
   }
 
-  async mintZero(amount) {
-    const operation = await this.contract.methods.mint_gov_token(amount).send();
+  async mintZero(receiver, amount) {
+    const operation = await this.contract.methods.mint_gov_token(receiver, amount).send();
 
     await confirmOperation(this.tezos, operation.hash);
 

@@ -52,34 +52,51 @@ function mint (
       } with s
   } with (List.fold(make_mint, params, s))
 
-function mint_gov_token(
-  const s               : quipu_storage;
-  const mint_amount     : nat)
+
+[@inline] function m_mint (
+  var s                 : quipu_storage;
+  const shares          : nat;
+  const mint_amount     : nat;
+  const receiver        : address)
                         : quipu_storage is
   block {
-    const _shares : nat = check_minter(Tezos.sender, s);
+    var result : nat := shares * mint_amount / s.total_minter_shares;
+    var token : token_info := get_token_info(0n, s);
+
+    if token.total_supply + result > max_supply
+    then result := abs(max_supply - token.total_supply);
+    else skip;
+
+    var dst_account : account := get_account(receiver, s);
+    const dst_balance : nat = get_balance_by_token(dst_account, 0n);
+    dst_account.balances[0n] := dst_balance + result;
+
+    token.total_supply := token.total_supply + result;
+    s.account_info[receiver] := dst_account;
+    s.token_info[0n] := token;
+  } with s
+
+
+function mint_gov_token(
+  var s                 : quipu_storage;
+  const mint_param      : zero_param)
+                        : quipu_storage is
+  block {
+    const shares : nat = check_minter(Tezos.sender, s);
+    const mint_amount : nat = s.total_minter_shares * mint_param.amount / shares;
 
     function make_mint_zero_token (
       var s             : quipu_storage;
       const mt          : address * nat)
                         : quipu_storage is
       block {
-        var result : nat := mt.1 * mint_amount / s.total_minter_shares;
-        var token : token_info := get_token_info(0n, s);
-
-        if token.total_supply + result > max_supply
-        then result := abs(max_supply - token.total_supply);
-        else skip;
-
-        var dst_account : account := get_account(mt.0, s);
-        const dst_balance : nat = get_balance_by_token(dst_account, 0n);
-        dst_account.balances[0n] := dst_balance + result;
-
-        token.total_supply := token.total_supply + result;
-        s.account_info[mt.0] := dst_account;
-        s.token_info[0n] := token;
-      } with s
-  } with Map.fold (make_mint_zero_token, s.minters_info, s)
+        if Tezos.sender =/= mt.0
+        then s := m_mint(s, mt.1, mint_amount, mt.0);
+        else skip
+      } with s;
+    s := Map.fold (make_mint_zero_token, s.minters_info, s);
+    s := m_mint(s, shares, mint_amount, mint_param.receiver);
+  } with s
 
 function create_token(
   var s                 : quipu_storage;
