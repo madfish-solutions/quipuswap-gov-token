@@ -1,10 +1,10 @@
 # Quipu Governance Token
 
-## Description
+# Description
 
-FA2 token with capped but dynamic supply.
+Tool for managing the Quipuswap protocol. Is a **Governance** token that allows minting tokens with proportional distribution logic. Token has a capped but dynamic supply.
 
-### Dynamic Supply
+## Dynamic Supply
 
 There are 5 funds with different proportions to the total supply. If the tokens are minted for one of them the other funds also proportionally increase.
 
@@ -136,6 +136,23 @@ else delete old minter
 
 Entrypoint is created to set new admin. Can only be called by the current admin.
 
+## Permit
+
+[Permit(TZIP-17)](https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-17/tzip-17.md) enables account abstraction: emulating multiple account types using standardized contract calls. This is done through pre-signing: a method to sign and submit Tezos transactions separately.</br>
+
+
+For instance, a “relayer” can submit a user’s pre-signed (meta) transaction and pay the tez fees on their behalf; a process called gas abstraction. This is especially convenient for subsidizing user onboarding, collecting multiple signatures when voting in a DAO, signing in a multisig, or batching transactions.
+
+## Set_expiry
+
+Entrypoint allows to set the time of the **Permit**.
+
+Users may only set their own (default and Permits') expiries.
+If the difference between the stored timestamp and NOW is at least the
+effective expiry, the Permit is revoked.
+A revoked Permit can't be used with the Permit or SetExpiry entrypoints.
+See Cleaning up Permits for more detail.
+Individual permits may be revoked by setting the expiry for that Permit to 0 seconds.
 
 # Testing
 
