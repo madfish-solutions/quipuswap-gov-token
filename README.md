@@ -4,7 +4,7 @@
 
 Tool for managing the Quipuswap protocol. Is a **Governance** token that allows minting tokens with proportional distribution logic. Token has a capped but dynamic supply.
 
-## Dynamic Supply
+## Supply Mechanics
 
 There are 5 funds with different proportions to the total supply. If the tokens are minted for one of them the other funds also proportionally increase.
 
@@ -112,12 +112,12 @@ Entrypoint can set **Minters** who are allowed to mint a zero *(Quipu Governance
 Can only be called by the admin. Expects a list of records with fields *minter* and *share*.
 
 ```
-type set_minter_param is [@layout:comb] record [
+type minter_type        is [@layout:comb] record [
     minter                : address;
     share                 : nat;
   ]
 
-type set_minter_params is list(set_minter_param)
+type set_minter_params is list(minter_type)
 
 | Set_minters           of set_minter_params
 ```

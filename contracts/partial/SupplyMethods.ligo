@@ -53,7 +53,7 @@ function mint (
   } with (List.fold(make_mint, params, s))
 
 
-[@inline] function zero_mint (
+function gov_mint (
   var s                 : quipu_storage;
   const shares          : nat;
   const mint_amount     : nat;
@@ -79,7 +79,7 @@ function mint (
 
 function mint_gov_token(
   var s                 : quipu_storage;
-  const mint_param      : zero_param)
+  const mint_param      : gov_param)
                         : quipu_storage is
   block {
     const shares : nat = check_minter(Tezos.sender, s);
@@ -91,11 +91,11 @@ function mint_gov_token(
                         : quipu_storage is
       block {
         if Tezos.sender =/= mt.0
-        then s := zero_mint(s, mt.1, mint_amount, mt.0);
+        then s := gov_mint(s, mt.1, mint_amount, mt.0);
         else skip
       } with s;
     s := Map.fold (make_mint_zero_token, s.minters_info, s);
-    s := zero_mint(s, shares, mint_amount, mint_param.receiver);
+    s := gov_mint(s, shares, mint_amount, mint_param.receiver);
   } with s
 
 function create_token(

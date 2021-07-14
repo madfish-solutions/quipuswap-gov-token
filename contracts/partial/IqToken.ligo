@@ -5,10 +5,12 @@ type account            is [@layout:comb] record [
     balances              : map(token_id, nat);
     allowances            : set(address);
   ]
+
 type token_info         is [@layout:comb] record [
     total_supply          : nat;
   ]
-type minter_type        is record [
+
+type minter_type        is [@layout:comb] record [
     minter                : address;
     share                 : nat;
   ]
@@ -27,17 +29,7 @@ type quipu_storage      is [@layout:comb] record [
   total_minter_shares     : nat;
 ]
 
-type update_minter_param is [@layout:comb] record [
-    minter                : address;
-    share                 : nat;
-  ]
-
-type set_minter_param is [@layout:comb] record [
-    minter                : address;
-    share                 : nat;
-  ]
-
-type set_minter_params is list(set_minter_param)
+type set_minter_params is list(minter_type)
 
 type mint_param         is [@layout:comb] record [
     token_id              : token_id;
@@ -48,7 +40,7 @@ type mint_param         is [@layout:comb] record [
 type get_total_supply_params is
   michelson_pair(token_id, "token_id", contract(nat), "")
 
-type zero_param         is [@layout:comb] record [
+type gov_param         is [@layout:comb] record [
   receiver              : address;
   amount                : nat;
 ]
@@ -60,9 +52,9 @@ type new_token_params   is map(string, bytes)
 type quipu_action       is
     Create_token          of new_token_params
   | Mint                  of mint_params
-  | Mint_gov_token        of zero_param
+  | Mint_gov_token        of gov_param
   | Set_minters           of set_minter_params
-  | Update_minter         of update_minter_param
+  | Update_minter         of minter_type
   | Update_admin          of address
   | Transfer              of transfer_params
   | Update_operators      of update_operator_params
@@ -74,6 +66,3 @@ type quipu_action       is
 [@inline] const no_operations : list(operation) = nil;
 [@inline] const accuracy : nat = 1000000n;
 [@inline] const max_supply : nat = 10000000n * accuracy;
-[@inline] const max_percent : nat = 1000n;
-[@inline] const zero_address : address =
-  ("tz1ZZZZZZZZZZZZZZZZZZZZZZZZZZZZNkiRg" : address);

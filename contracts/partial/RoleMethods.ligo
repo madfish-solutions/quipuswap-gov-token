@@ -35,28 +35,28 @@ function set_minters(
 
     function set_minter(
       var s                 : quipu_storage;
-      const param           : set_minter_param)
+      const param           : minter_type)
                             : quipu_storage is
       block {
           s.minters_info[param.minter] := param.share;
           s.total_minter_shares := s.total_minter_shares + param.share;
       } with s
-
   } with (List.fold(set_minter, params, s))
 
 
 (* Update minter permissions *)
 function update_minter(
   var s                 : quipu_storage;
-  const param           : update_minter_param)
+  const param           : minter_type)
                         : quipu_storage is
   block {
     if Tezos.sender =/= s.admin
     then failwith("NOT_ADMIN")
     else skip;
 
+    const share : nat = minter_shares(param.minter, s);
+
     if param.share =/= 0n then {
-      const share : nat = minter_shares(param.minter, s);
       if share > 0n
       then block {
         s.total_minter_shares := abs(s.total_minter_shares - share);
@@ -68,8 +68,6 @@ function update_minter(
       s.total_minter_shares := s.total_minter_shares + param.share;
     }
     else {
-      const share : nat = minter_shares(param.minter, s);
-
       remove param.minter from map s.minters_info;
       s.total_minter_shares := abs(s.total_minter_shares - share);
     }
