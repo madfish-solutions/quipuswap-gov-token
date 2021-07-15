@@ -1,4 +1,4 @@
-[@inline] function minter_shares (
+[@inline] function minter_shares(
   const minter          : address;
   const s               : quipu_storage)
                         : nat is
@@ -34,9 +34,9 @@ function set_minters(
     s.minters_info := minters;
 
     function set_minter(
-      var s                 : quipu_storage;
-      const param           : minter_type)
-                            : quipu_storage is
+      var s             : quipu_storage;
+      const param       : minter_type)
+                        : quipu_storage is
       block {
           s.minters_info[param.minter] := param.share;
           s.total_minter_shares := s.total_minter_shares + param.share;

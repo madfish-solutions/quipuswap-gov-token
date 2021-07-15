@@ -45,6 +45,7 @@ type gov_param         is [@layout:comb] record [
   amount                : nat;
 ]
 
+type gov_params         is list(gov_param)
 type mint_params        is list(mint_param)
 type return             is list(operation) * quipu_storage
 type new_token_params   is map(string, bytes)
@@ -52,7 +53,7 @@ type new_token_params   is map(string, bytes)
 type quipu_action       is
     Create_token          of new_token_params
   | Mint                  of mint_params
-  | Mint_gov_token        of gov_param
+  | Mint_gov_token        of gov_params
   | Set_minters           of set_minter_params
   | Update_minter         of minter_type
   | Update_admin          of address

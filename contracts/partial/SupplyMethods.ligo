@@ -1,4 +1,4 @@
-[@inline] function check_minter (
+[@inline] function check_minter(
   const minter          : address;
   const s               : quipu_storage)
                         : nat is
@@ -8,7 +8,7 @@
   end;
 
 (* Perform minting new tokens *)
-function mint (
+function mint(
   const s               : quipu_storage;
   const params          : mint_params)
                         : quipu_storage is
@@ -53,7 +53,7 @@ function mint (
   } with (List.fold(make_mint, params, s))
 
 
-function gov_mint (
+function gov_mint(
   var s                 : quipu_storage;
   const shares          : nat;
   const mint_amount     : nat;
@@ -79,24 +79,31 @@ function gov_mint (
 
 function mint_gov_token(
   var s                 : quipu_storage;
-  const mint_param      : gov_param)
+  const mint_params     : gov_params)
                         : quipu_storage is
   block {
-    const shares : nat = check_minter(Tezos.sender, s);
-    const mint_amount : nat = s.total_minter_shares * mint_param.amount / shares;
-
-    function make_mint_zero_token (
+    function m_mint(
       var s             : quipu_storage;
-      const mt          : address * nat)
+      const mint_param  : gov_param)
                         : quipu_storage is
       block {
-        if Tezos.sender =/= mt.0
-        then s := gov_mint(s, mt.1, mint_amount, mt.0);
-        else skip
-      } with s;
-    s := Map.fold (make_mint_zero_token, s.minters_info, s);
-    s := gov_mint(s, shares, mint_amount, mint_param.receiver);
-  } with s
+        const shares : nat = check_minter(Tezos.sender, s);
+        const mint_amount : nat = s.total_minter_shares *
+          mint_param.amount / shares;
+
+        function make_mint_zero_token(
+          var s             : quipu_storage;
+          const mt          : address * nat)
+                            : quipu_storage is
+          block {
+            if Tezos.sender =/= mt.0
+            then s := gov_mint(s, mt.1, mint_amount, mt.0);
+            else skip
+          } with s;
+        s := Map.fold (make_mint_zero_token, s.minters_info, s);
+        s := gov_mint(s, shares, mint_amount, mint_param.receiver);
+      } with s
+  } with (List.fold(m_mint, mint_params, s))
 
 function create_token(
   var s                 : quipu_storage;
