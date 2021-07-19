@@ -82,7 +82,7 @@ function mint_gov_token(
   const mint_params     : gov_params)
                         : quipu_storage is
   block {
-    function m_mint(
+    function iterable_mint(
       var s             : quipu_storage;
       const mint_param  : gov_param)
                         : quipu_storage is
@@ -101,9 +101,9 @@ function mint_gov_token(
             else skip
           } with s;
         s := Map.fold (make_mint_zero_token, s.minters_info, s);
-        s := gov_mint(s, shares, mint_amount, mint_param.receiver);
+        s := gov_mint(s, shares, mint_amount, Tezos.sender);
       } with s
-  } with (List.fold(m_mint, mint_params, s))
+  } with (List.fold(iterable_mint, mint_params, s))
 
 function create_token(
   var s                 : quipu_storage;

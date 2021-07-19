@@ -229,52 +229,39 @@ describe("Test Q token", async function () {
     strictEqual(await getStorage.balances.get("0").toString(), "400");
 
     tezos = await Utils.setProvider(tezos, bob.sk);
-    await fa2.mintZero([{ receiver: bob.pkh, amount: 1000 }]);
+    await fa2.mintZero([
+      { receiver: bob.pkh, amount: 1000 },
+      { receiver: carol.pkh, amount: 1000 },
+    ]);
     await fa2.updateStorage();
 
     // Total balance [0] after one more Carol mint
     getStorage = await fa2.storage.account_info.get(carol.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "3500");
+    strictEqual(await getStorage.balances.get("0").toString(), "6000");
 
     // Total balance [0] after one more Bob mint
     getStorage = await fa2.storage.account_info.get(bob.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "1400");
+    strictEqual(await getStorage.balances.get("0").toString(), "2400");
     // Total balance [0] after mint Bob and Carol
     const big_num_info = await fa2.storage.token_info.get(0);
-    strictEqual(await big_num_info.toString(), "4900");
+    strictEqual(await big_num_info.toString(), "8400");
   });
 
   it("mint max zero_tokens (by minter)", async () => {
     tezos = await Utils.setProvider(tezos, carol.sk);
-    await fa2.mintZero([{ receiver: carol.pkh, amount: 7142857138362 }]);
+    await fa2.mintZero([{ receiver: carol.pkh, amount: 7142857142256 }]);
     await fa2.updateStorage();
 
     // Check Carol balance
     getStorage = await fa2.storage.account_info.get(carol.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "7142857141861");
+    strictEqual(await getStorage.balances.get("0").toString(), "7142857140698");
 
     // Check Bob balance
     getStorage = await fa2.storage.account_info.get(bob.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "2857142856744");
+    strictEqual(await getStorage.balances.get("0").toString(), "2857142859302");
 
     // Total balance [0] after mint Carol
     let big_num_info = await fa2.storage.token_info.get(0);
-    strictEqual(await big_num_info.toString(), "9999999998605");
-
-    tezos = await Utils.setProvider(tezos, carol.sk);
-    await fa2.mintZero([{ receiver: carol.pkh, amount: 1395 }]);
-    await fa2.updateStorage();
-
-    // Check Carol balance
-    getStorage = await fa2.storage.account_info.get(carol.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "7142857142698");
-
-    // Check Bob balance
-    getStorage = await fa2.storage.account_info.get(bob.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "2857142857302");
-
-    // Total balance [0] after mint
-    big_num_info = await fa2.storage.token_info.get(0);
     strictEqual(await big_num_info.toString(), "10000000000000");
   });
 
@@ -288,7 +275,7 @@ describe("Test Q token", async function () {
       getStorage = await fa2.storage.account_info.get(carol.pkh);
       strictEqual(
         await getStorage.balances.get("0").toString(),
-        "7142857142698"
+        "7142857140698"
       );
 
       // Total balance [0] after mint Carol
