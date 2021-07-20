@@ -31,7 +31,7 @@ type quipu_storage      is [@layout:comb] record [
 
 type set_minter_params is list(minter_type)
 
-type mint_param         is [@layout:comb] record [
+type asset_param         is [@layout:comb] record [
     token_id              : token_id;
     receiver              : address;
     amount                : nat;
@@ -46,13 +46,13 @@ type gov_param         is [@layout:comb] record [
 ]
 
 type gov_params         is list(gov_param)
-type mint_params        is list(mint_param)
+type asset_params       is list(asset_param)
 type return             is list(operation) * quipu_storage
 type new_token_params   is map(string, bytes)
 
 type quipu_action       is
     Create_token          of new_token_params
-  | Mint                  of mint_params
+  | Mint                  of asset_params
   | Mint_gov_token        of gov_params
   | Set_minters           of set_minter_params
   | Update_minter         of minter_type

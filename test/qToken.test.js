@@ -119,24 +119,24 @@ describe("Test Q token", async function () {
     tezos = await Utils.setProvider(tezos, alice.sk);
     await fa2.setMinters([
       { minter: carol.pkh, share: 50 },
-      { minter: bob.pkh, share: 5 },
+      { minter: bob.pkh, share: 20 },
     ]);
     await fa2.updateStorage();
 
-    strictEqual(await fa2.storage.minters_info.get(bob.pkh).toString(), "5");
+    strictEqual(await fa2.storage.minters_info.get(bob.pkh).toString(), "20");
     strictEqual(await fa2.storage.minters_info.get(carol.pkh).toString(), "50");
   });
 
   it("add minter (by admin)", async () => {
     tezos = await Utils.setProvider(tezos, alice.sk);
 
-    await fa2.updateMinter(bob.pkh, 20);
+    await fa2.updateMinter(bob.pkh, 50);
     await fa2.updateStorage();
 
     await fa2.updateMinter(peter.pkh, 10);
     await fa2.updateStorage();
 
-    strictEqual(await fa2.storage.minters_info.get(bob.pkh).toString(), "20");
+    strictEqual(await fa2.storage.minters_info.get(bob.pkh).toString(), "50");
     strictEqual(await fa2.storage.minters_info.get(carol.pkh).toString(), "50");
     strictEqual(await fa2.storage.minters_info.get(peter.pkh).toString(), "10");
   });
@@ -147,7 +147,7 @@ describe("Test Q token", async function () {
     await fa2.updateMinter(peter.pkh, 0);
     await fa2.updateStorage();
 
-    strictEqual(await fa2.storage.minters_info.get(bob.pkh).toString(), "20");
+    strictEqual(await fa2.storage.minters_info.get(bob.pkh).toString(), "50");
     strictEqual(await fa2.storage.minters_info.get(carol.pkh).toString(), "50");
     strictEqual(await fa2.storage.minters_info.get(peter.pkh), undefined);
   });
@@ -226,7 +226,7 @@ describe("Test Q token", async function () {
     strictEqual(await getStorage.balances.get("0").toString(), "1000");
 
     getStorage = await fa2.storage.account_info.get(bob.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "400");
+    strictEqual(await getStorage.balances.get("0").toString(), "1000");
 
     tezos = await Utils.setProvider(tezos, bob.sk);
     await fa2.mintZero([
@@ -235,16 +235,16 @@ describe("Test Q token", async function () {
     ]);
     await fa2.updateStorage();
 
-    // Total balance [0] after one more Carol mint
+    // // Total balance [0] after one more Carol mint
     getStorage = await fa2.storage.account_info.get(carol.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "6000");
+    strictEqual(await getStorage.balances.get("0").toString(), "4000");
 
-    // Total balance [0] after one more Bob mint
+    // // Total balance [0] after one more Bob mint
     getStorage = await fa2.storage.account_info.get(bob.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "2400");
+    strictEqual(await getStorage.balances.get("0").toString(), "2000");
     // Total balance [0] after mint Bob and Carol
     const big_num_info = await fa2.storage.token_info.get(0);
-    strictEqual(await big_num_info.toString(), "8400");
+    strictEqual(await big_num_info.toString(), "6000");
   });
 
   it("mint max zero_tokens (by minter)", async () => {
@@ -254,11 +254,11 @@ describe("Test Q token", async function () {
 
     // Check Carol balance
     getStorage = await fa2.storage.account_info.get(carol.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "7142857140698");
+    strictEqual(await getStorage.balances.get("0").toString(), "2857142855744");
 
     // Check Bob balance
     getStorage = await fa2.storage.account_info.get(bob.pkh);
-    strictEqual(await getStorage.balances.get("0").toString(), "2857142859302");
+    strictEqual(await getStorage.balances.get("0").toString(), "7142857144256");
 
     // Total balance [0] after mint Carol
     let big_num_info = await fa2.storage.token_info.get(0);

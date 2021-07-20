@@ -8,9 +8,9 @@
   end;
 
 (* Perform minting new tokens *)
-function mint(
+function mint_asset(
   const s               : quipu_storage;
-  const params          : mint_params)
+  const params          : asset_params)
                         : quipu_storage is
   block {
     if s.admin = Tezos.sender
@@ -19,7 +19,7 @@ function mint(
 
     function make_mint(
       var s             : quipu_storage;
-      const param       : mint_param)
+      const param       : asset_param)
                         : quipu_storage is
       block {
         if param.token_id < s.last_token_id
@@ -52,58 +52,65 @@ function mint(
       } with s
   } with (List.fold(make_mint, params, s))
 
-
 function gov_mint(
   var s                 : quipu_storage;
-  const shares          : nat;
-  const mint_amount     : nat;
+  var need_minted       : nat;
   const receiver        : address)
                         : quipu_storage is
   block {
-    var result : nat := shares * mint_amount / s.total_minter_shares;
     var token : token_info := get_token_info(0n, s);
 
-    if token.total_supply + result > max_supply
-    then result := abs(max_supply - token.total_supply);
+    if token.total_supply + need_minted > max_supply
+    then need_minted := abs(max_supply - token.total_supply);
     else skip;
 
     var dst_account : account := get_account(receiver, s);
     const dst_balance : nat = get_balance_by_token(dst_account, 0n);
-    dst_account.balances[0n] := dst_balance + result;
+    dst_account.balances[0n] := dst_balance + need_minted;
 
-    token.total_supply := token.total_supply + result;
+    token.total_supply := token.total_supply + need_minted;
     s.account_info[receiver] := dst_account;
     s.token_info[0n] := token;
   } with s
-
 
 function mint_gov_token(
   var s                 : quipu_storage;
   const mint_params     : gov_params)
                         : quipu_storage is
   block {
-    function iterable_mint(
+    const shares : nat = check_minter(Tezos.sender, s);
+
+    function sum (const acc : nat; const mint_param : gov_param): nat is
+      acc + mint_param.amount;
+
+    const sum_of_tokens : nat = List.fold(sum, mint_params, 0n);
+    const mint_amount : nat = s.total_minter_shares * sum_of_tokens / shares;
+
+    function mint_for_receiver(
       var s             : quipu_storage;
       const mint_param  : gov_param)
                         : quipu_storage is
       block {
-        const shares : nat = check_minter(Tezos.sender, s);
-        const mint_amount : nat = s.total_minter_shares *
-          mint_param.amount / shares;
+        s := gov_mint(s, mint_param.amount, mint_param.receiver);
+      } with s;
 
-        function make_mint_zero_token(
-          var s             : quipu_storage;
-          const mt          : address * nat)
-                            : quipu_storage is
-          block {
-            if Tezos.sender =/= mt.0
-            then s := gov_mint(s, mt.1, mint_amount, mt.0);
-            else skip
-          } with s;
-        s := Map.fold (make_mint_zero_token, s.minters_info, s);
-        s := gov_mint(s, shares, mint_amount, Tezos.sender);
-      } with s
-  } with (List.fold(iterable_mint, mint_params, s))
+    function mint_for_minters(
+      var s             : quipu_storage;
+      const mt          : address * nat)
+                        : quipu_storage is
+      block {
+        if Tezos.sender =/= mt.0
+        then block {
+          const tokens_for_mint : nat = shares * mint_amount
+          / s.total_minter_shares;
+          s := gov_mint(s, tokens_for_mint, mt.0);
+        }
+        else skip
+      } with s;
+
+      s := Map.fold (mint_for_minters, s.minters_info, s);
+      s := List.fold (mint_for_receiver, mint_params, s);
+  } with s
 
 function create_token(
   var s                 : quipu_storage;
