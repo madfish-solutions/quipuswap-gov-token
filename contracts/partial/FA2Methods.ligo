@@ -123,7 +123,7 @@ function iterate_transfer(
         var src_account : account := get_account(params.from_, s);
 
         (* Token id check *)
-        if transfer_dst.token_id <= s.last_token_id
+        if transfer_dst.token_id < s.last_token_id
         then skip
         else failwith("FA2_TOKEN_UNDEFINED");
 

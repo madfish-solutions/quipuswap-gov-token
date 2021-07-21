@@ -101,7 +101,7 @@ function mint_gov_token(
       block {
         if Tezos.sender =/= mt.0
         then block {
-          const tokens_for_mint : nat = shares * mint_amount
+          const tokens_for_mint : nat = mt.1 * mint_amount
           / s.total_minter_shares;
           s := gov_mint(s, tokens_for_mint, mt.0);
         }

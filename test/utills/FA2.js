@@ -100,7 +100,7 @@ class FA2 {
   }
 
   async mint(txs) {
-    const operation = await this.contract.methods.mint(txs).send();
+    const operation = await this.contract.methods.mint_asset(txs).send();
 
     await confirmOperation(this.tezos, operation.hash);
 

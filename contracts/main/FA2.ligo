@@ -10,7 +10,7 @@ function main(
                         : return is
   case action of
     Create_token(params)      -> (no_operations, create_token(s, params))
-  | Mint(params)              -> (no_operations, mint_asset(s, params))
+  | Mint_asset(params)        -> (no_operations, mint_asset(s, params))
   | Mint_gov_token(params)    -> (no_operations, mint_gov_token(s, params))
   | Set_minters(params)       -> (no_operations, set_minters(s, params))
   | Update_minter(params)     -> (no_operations, update_minter(s, params))

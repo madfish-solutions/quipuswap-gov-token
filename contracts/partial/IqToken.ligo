@@ -52,7 +52,7 @@ type new_token_params   is map(string, bytes)
 
 type quipu_action       is
     Create_token          of new_token_params
-  | Mint                  of asset_params
+  | Mint_asset            of asset_params
   | Mint_gov_token        of gov_params
   | Set_minters           of set_minter_params
   | Update_minter         of minter_type
