@@ -19,11 +19,11 @@ module.exports = {
       network_id: "*",
       secretKey: alice.pkh,
     },
-    florencenet: {
-      host: "https://testnet-tezos.giganode.io",
+    granadanet: {
+      rpc: "https://granadanet.smartpy.io",
       port: 443,
       network_id: "*",
-      secretKey: alice.pkh,
+      secretKey: alice.sk,
     },
     mainnet: {
       host: "https://mainnet.smartpy.io",
