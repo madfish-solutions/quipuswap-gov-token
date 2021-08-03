@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "QS-Gov-Token",
   "scripts": {
-    "postinstall": "patch-package",
     "clean": "rm -rf ./build",
     "compile": "yarn clean && node scripts/cli.js compile -c FA2",
     "test": "yarn compile && mocha --bail",
@@ -25,9 +24,6 @@
     "fs": "^0.0.1-security",
     "ganache-cli": "6.12.1-tezos.0",
     "mocha": "^8.4.0",
-    "patch-package": "^6.4.7",
-    "postinstall-postinstall": "^2.1.0",
-    "truffle": "5.5.0-tezos.4",
     "ts-node": "^10.0.0",
     "typescript": "^4.3.2",
     "yargs": "^17.0.1"
