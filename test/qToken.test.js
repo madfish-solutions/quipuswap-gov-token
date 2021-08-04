@@ -2,12 +2,14 @@ const { MichelsonMap } = require("@taquito/michelson-encoder");
 const { InMemorySigner } = require("@taquito/signer");
 const { TezosToolkit } = require("@taquito/taquito");
 
-const { alice, bob, carol, peter } = require("../scripts/sandbox/accounts2");
+const { alice, bob, carol, peter } = require("../scripts/sandbox/accounts");
 
 const { rejects, strictEqual } = require("assert");
 
 const { FA2 } = require("../test/utills/FA2");
 const { Utils } = require("../test/utills/Utils");
+const env = require("../env");
+
 
 const { confirmOperation } = require("../scripts/confirmation");
 
@@ -22,7 +24,9 @@ const tokenMetadata = MichelsonMap.fromLiteral({
 });
 
 async function getTezosFor(secretKey) {
-  let tz = new TezosToolkit("http://136.244.96.28:8732");
+  const networkConfig = env.networks[options.network];
+  let tz = new TezosToolkit(networkConfig.rpc);
+
   tz.setProvider({ signer: new InMemorySigner(secretKey) });
   return tz;
 }

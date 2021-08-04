@@ -1,5 +1,4 @@
-const { alice } = require('../../scripts/sandbox/accounts2');
-
+const { alice } = require("../../scripts/sandbox/accounts");
 
 require("dotenv").config();
 require("ts-node").register({
@@ -16,7 +15,10 @@ const network = env.network || defaultNetwork;
 
 class Utils {
   static async initTezos() {
-    const tezos = new TezosToolkit("http://136.244.96.28:8732");
+    const networkConfig = env.networks[options.network];
+    const tezos = new TezosToolkit(networkConfig.rpc);
+
+    // const tezos = new TezosToolkit("http://136.244.96.28:8732");
 
     tezos.setProvider({
       config: {

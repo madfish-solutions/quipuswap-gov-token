@@ -1,4 +1,4 @@
-const { alice } = require("../scripts/sandbox/accounts2");
+const { alice } = require("../scripts/sandbox/accounts");
 require("dotenv").config();
 require("ts-node").register({
   files: true,
@@ -141,7 +141,8 @@ const runMigrations = async (options) => {
     options.optionFrom = options.from || 0;
     options.optionTo = options.to || migrations.length;
 
-    const tezos = new TezosToolkit("http://136.244.96.28:8732");
+    const networkConfig = env.networks[options.network];
+    const tezos = new TezosToolkit(networkConfig.rpc);
 
     tezos.setProvider({
       config: {

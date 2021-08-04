@@ -24,7 +24,7 @@ To sum up, the tokens can't be minted only to one funds. If one of the funds inc
 ├──  contracts/ # contracts
 ├──────────  main/ # the contracts to be compiled
 ├───────────────────  FA2 # main file
-├──────────  partials/ # the code parts imported by main contracts
+├──────────  partial/ # the code parts imported by main contracts
 ├───────────────────  FA2Methods # standart FA2 methods
 ├───────────────────  FA2Types # types for FA2
 ├───────────────────  IPermit # types for Permits
