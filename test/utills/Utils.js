@@ -18,8 +18,6 @@ class Utils {
     const networkConfig = env.networks[options.network];
     const tezos = new TezosToolkit(networkConfig.rpc);
 
-    // const tezos = new TezosToolkit("http://136.244.96.28:8732");
-
     tezos.setProvider({
       config: {
         confirmationPollingTimeoutSecond: env.confirmationPollingTimeoutSecond,

@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const { alice, dev } = require("./scripts/sandbox/accounts");
+const { alice, dev, devF } = require("./scripts/sandbox/accounts");
 
 module.exports = {
   outputFile: "output.txt",
@@ -11,7 +11,7 @@ module.exports = {
   migrationsDir: "migrations",
   contractsDir: "contracts/main",
   ligoVersion: "0.17.0",
-  network: "development",
+  network: "florencenet",
   networks: {
     development: {
       host: "http://136.244.96.28",
@@ -24,6 +24,19 @@ module.exports = {
       port: 443,
       network_id: "*",
       secretKey: dev.sk,
+    },
+    granadanet2: {
+      rpc: "https://granadanet.smartpy.io",
+      port: 443,
+      network_id: "*",
+      secretKey: dev.sk,
+    },
+    florencenet: {
+      host: "https://florencenet.smartpy.io",
+      port: 443,
+      network_id: "*",
+      secretKey: devF.sk,
+      type: "tezos",
     },
     mainnet: {
       host: "https://mainnet.smartpy.io",

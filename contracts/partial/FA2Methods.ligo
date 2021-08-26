@@ -93,14 +93,14 @@ function transfer_sender_check(
             (* check whether `from_` has issued a permit *)
             const from_ : address = first_param.from_;
             const updated_store : quipu_storage =
-              sender_check(from_, store, full_param, "FA2_NOT_OPERATOR1");
+              sender_check(from_, store, full_param, "FA2_NOT_OPERATOR");
 
             (* check that all operations relate to the same owner *)
             List.iter(function (
                 const param   : transfer_param)
                               : unit is
                   if param.from_ =/= from_
-                    then failwith ("FA2_NOT_OPERATOR2")
+                    then failwith ("FA2_NOT_OPERATOR")
                     else Unit,
               rest
               )

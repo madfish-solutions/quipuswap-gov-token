@@ -8,6 +8,8 @@
     "test": "yarn compile && mocha --bail",
     "migrate": "yarn compile && node scripts/cli.js migrate",
     "migrate-gra": "yarn compile && node scripts/cli.js migrate --network granadanet",
+    "migrate-gra2": "yarn compile && node scripts/cli.js migrate --network granadanet2",
+    "migrate-florence": "yarn compile && node scripts/cli.js migrate --network florencenet",
     "migrate-s": "yarn compile && node scripts/cli.js migrate --network development_server",
     "start-sandbox": "docker run --rm --name my-sandbox -e flextesa_node_cors_origin='*' --detach -p 8732:20000 tqtezos/flextesa:20210316 flobox start"
   },
